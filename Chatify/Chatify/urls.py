@@ -4,28 +4,15 @@ from django.contrib import admin
 from django.conf import settings
 from django.views.generic.base import TemplateView
 
-
-
-
-def bad(request):
-    """ Simulates a server error """
-    1 / 0
-
 urlpatterns = [
-    path("i18n/", include("django.conf.urls.i18n")),
+    path("i18n/", include("django.conf.urls.i18n"),
+         ),
 ]
 
 
 urlpatterns += i18n_patterns(
-    path("bad/", bad),
-	path('', include('djvue.urls')),
-    
-    path(f"{settings.ADMIN_URL}/", admin.site.urls),
-    
+    path('', include('djvue.urls')),
 
-
-    
-    
 )
 
 if settings.DEBUG:
