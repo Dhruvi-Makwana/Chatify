@@ -19,7 +19,13 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path("bad/", bad),
 	path('', include('djvue.urls')),
+    
     path(f"{settings.ADMIN_URL}/", admin.site.urls),
+    
+
+
+    
+    
 )
 
 if settings.DEBUG:
