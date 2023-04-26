@@ -57,7 +57,14 @@ MANAGERS = ADMINS
 ADMIN_URL = env.str("DJANGO_ADMIN_URL", "admin")
 
 DATABASES = {
-    'default': env.db("DATABASE_URL", default="")
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'chatify_db',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
@@ -83,7 +90,7 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = "Asia"
+TIME_ZONE = "Asia/Kolkata"
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -198,6 +205,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "compressor",
+
+    "chat",
 ]
 
 
