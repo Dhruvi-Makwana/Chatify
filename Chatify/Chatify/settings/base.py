@@ -21,7 +21,7 @@ env = environ.Env()
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
-    env.read_env(env_file=join(PROJECT_ROOT, '.env'))
+    env.read_env(env_file=join(PROJECT_ROOT, ".env"))
 
 # Absolute filesystem path to the django repo directory:
 DJANGO_ROOT = dirname(PROJECT_ROOT)
@@ -48,25 +48,23 @@ path.append(CONFIG_ROOT)
 DEBUG = STAGING = env.bool("DJANGO_DEBUG", False)
 ########## END DEBUG CONFIGURATION
 
-ADMINS = (
-    ("""Dhruvi-Makwana""", "dhruvi.makwana@trootech.com"),
-)
+ADMINS = (("""Dhruvi-Makwana""", "dhruvi.makwana@trootech.com"),)
 
 MANAGERS = ADMINS
 
 ADMIN_URL = env.str("DJANGO_ADMIN_URL", "admin")
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chatify_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "chatify_db",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
-DATABASES['default']['ATOMIC_REQUESTS'] = True
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
 DATABASES["default"]["OPTIONS"] = {
     "init_command": "SET default_storage_engine=InnoDB",
@@ -74,7 +72,9 @@ DATABASES["default"]["OPTIONS"] = {
     "use_unicode": True,
 }
 
-EMAIL_BACKEND = env.str("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_BACKEND = env.str(
+    "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
+)
 EMAIL_HOST = env.str("EMAIL_HOST", "")
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", "")
@@ -145,7 +145,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don"t share it with anybody.
-SECRET_KEY = env('DJANGO_SECRET_KEY', default="")
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
 
 # List of callables that know how to import templates from various sources.
 TEMPLATES = [
@@ -163,19 +163,13 @@ TEMPLATES = [
                 "django.template.context_processors.media",
                 "django.template.context_processors.csrf",
                 "django.template.context_processors.tz",
-                
                 "django.template.context_processors.static",
-
-                
             ]
         },
     },
 ]
 
 MIDDLEWARE = [
-    
-
-    
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -184,7 +178,6 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
 ]
 
 ROOT_URLCONF = "Chatify.urls"
@@ -201,11 +194,9 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "django.contrib.staticfiles",
     "django.contrib.messages",
-
     "rest_framework",
     "rest_framework.authtoken",
     "compressor",
-
     "chat",
 ]
 
@@ -230,29 +221,19 @@ gettext = lambda s: s
 
 LANGUAGES = [
     ("en", gettext("en")),
-    
 ]
-
-
-
-
-
 
 
 # Analytics
 GOOGLE_ANALYTICS = env.str("GOOGLE_ANALYTICS", default="")
 
 CACHE_ENGINES = {
-    
     "dummy": {
         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
-CACHES = {
-    "default": CACHE_ENGINES[env.str("CACHE", default="dummy")]
-}
-
+CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
 
 REST_FRAMEWORK = {
@@ -261,7 +242,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 10
+    "PAGE_SIZE": 10,
 }
 
 SENTRY_DSN = env.str("SENTRY_DSN", "")
