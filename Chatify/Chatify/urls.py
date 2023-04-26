@@ -20,6 +20,7 @@ if settings.DEBUG:
         # Testing 404 and 500 error pages
         path("404/", TemplateView.as_view(template_name="404.html"), name="404"),
         path("500/", TemplateView.as_view(template_name="500.html"), name="500"),
+        path('', include("chat.urls")),
     ]
 
     from django.conf.urls.static import static
