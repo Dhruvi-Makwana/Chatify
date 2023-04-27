@@ -61,7 +61,7 @@ DATABASES = {
         "USER": "postgres",
         "PASSWORD": "postgres",
         "HOST": "localhost",
-        "PORT": "5432",
+        "PORT": "",
     }
 }
 
@@ -76,6 +76,7 @@ DATABASES["default"]["OPTIONS"] = {
 EMAIL_BACKEND = env.str(
     "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
 )
+
 EMAIL_HOST = env.str("EMAIL_HOST", "")
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", "")
@@ -85,6 +86,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
 
 # Local time zone for this installation. Choices can be found here:
@@ -139,6 +141,7 @@ STATICFILES_DIRS = (
 
 # List of finder classes that know how to find static files in
 # various locations.
+
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -235,7 +238,6 @@ CACHE_ENGINES = {
 }
 
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
-
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
