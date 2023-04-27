@@ -1,9 +1,9 @@
-from .views import register, login
+from .views import register, login, chat
 from django.urls import include, path
 
 app_name = "chat"
 urlpatterns = [
-    path("user_register/", register, name="user_register"),
+    path("register/", register, name="user_register"),
     path("login/", login, name="user_register"),
-    path("chatui/",chat,name="chatui"),
+    path("chat/", chat, name="chat"),
 ]

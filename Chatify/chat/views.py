@@ -12,5 +12,6 @@ def register(request):
 def login(request):
     return render(request, "chat/login.html")
 
+
 def chat(request):
-    return render(request,"chat/chat.html")
+    return render(request, "chat/chat.html")
