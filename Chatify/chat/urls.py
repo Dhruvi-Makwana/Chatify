@@ -1,5 +1,5 @@
 from .views import register, login, chat
-from django.urls import include, path
+from django.urls import path
 
 app_name = "chat"
 urlpatterns = [

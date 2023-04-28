@@ -1,26 +1,9 @@
-<!DOCTYPE html>
-{% load static %}
-<html>
-<head>
-    <title>Chat</title>
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min_chat.css' %}" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/font_awesome.css' %}" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.mCustomScrollbar.min_chat.css' %}">
-    <script type="text/javascript" src="{% static 'js/jquery.min_chat.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/angular.min.js' %}"></script>
-
-    <script type="text/javascript" src="{% static 'js/jquery.mCustomScrollbar.min_chat.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/angularBinding.js' %}"></script>
-
-
-</head>
-<!--Coded With Love By Mutiullah Samim-->
-
-<body>
+{% extends 'chat/base.html' %}
+{% block title %} Chat {% endblock %}
+        {% load static %}
+             {% block showdata %}
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
-            <!-- user list card started from here -->
             <div class="col-md-4 col-xl-3 chat">
                 <div class="card mb-sm-3 mb-md-0 contacts_card">
                     <div class="card-header">
@@ -103,9 +86,8 @@
                                 <p ng-bind="showdata.username"></p>
                                 <span class="msg_time">8:40 AM, Today</span>
                             </div>
-                        </div>
 
-                        <!-- sender message showing div -->
+                        </div>
                         <div class="d-flex justify-content-end mb-4">
                             <div class="msg_cotainer_send">
                                 Hi Khalid i am good tnx how about you?
@@ -134,6 +116,4 @@
             </div>
         </div>
     </div>
-</body>
-
-</html>
+{% endblock %}
