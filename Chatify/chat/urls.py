@@ -3,7 +3,7 @@ from django.urls import include, path
 from .api import RegistrationApi
 
 urlpatterns = [
-    path("api/register/",RegistrationApi.as_view(),name='RegistrationApi'),   
+    path("api/register/", RegistrationApi.as_view(), name="RegistrationApi"),
 ]
 
 
