@@ -4,5 +4,5 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractUser):
-    profile_photo = models.ImageField(upload_to='profile_photo/')
+    profile_photo = models.ImageField(upload_to="profile_photo/")
     mobile_number = PhoneNumberField(unique=True)
