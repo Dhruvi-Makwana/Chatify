@@ -1,4 +1,3 @@
-
 $(document).on("submit", "#register_form", function(event) {
         console.log("hii")
         event.preventDefault();
