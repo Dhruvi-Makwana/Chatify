@@ -5,6 +5,6 @@
         event.stopImmediatePropagation();
         var formdata =  new FormData(this)
         makeAjaxRequest('POST',csrfToken,"/register/", formdata, function(response){
-        window.location = '/login/';
+
         })
     })
