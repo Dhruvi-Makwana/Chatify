@@ -13,7 +13,7 @@ class RegistrationApi(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserListAPI(APIView):
@@ -23,4 +23,4 @@ class UserListAPI(APIView):
             serializer = UserSerializer(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
