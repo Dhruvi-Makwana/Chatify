@@ -19,16 +19,15 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
+        validated_data.pop("confirm_password")
         instance = super().create(validated_data)
         raw_password = validated_data.get("password")
         instance.set_password(raw_password)
         instance.save()
         return instance
 
-    def validate(self, attrs):
-        password = attrs.get("password")
-        confirmation_password = attrs.get("confirm_password")
-        if not password == confirmation_password:
+    def validate_password(self, attrs):
+        confirmation_password = self.initial_data.get("confirm_password")
+        if not attrs == confirmation_password:
             raise serializers.ValidationError("PASSWORD DOESNOT MATCH")
-        attrs.pop("confirm_password")
         return attrs
