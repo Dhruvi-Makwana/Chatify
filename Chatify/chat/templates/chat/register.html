@@ -1,7 +1,10 @@
 {% extends 'chat/base.html' %}
         {% load static %}
 {% block title %} register {% endblock %}
-             {% block showdata %}
+             {% block content %}
+ <script src="{% static 'js/register.js' %}"></script>
+ <script src="{% static 'js/ajax_request.js' %}"></script>
+
     <div class="wrapper">
       <div class="title">Register Form</div>
       <form method="post" enctype="multipart/form-data" id="register_form">

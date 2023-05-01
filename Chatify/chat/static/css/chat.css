@@ -262,3 +262,11 @@ body,
                 margin-bottom: 15px !important;
             }
         }
+        .userlist
+        {
+        text-decoration: none;
+        }
+        li:hover
+        {
+          background: #00000052;
+        }
