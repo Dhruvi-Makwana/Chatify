@@ -3,7 +3,9 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
-    confirm_password = serializers.CharField(max_length=255, write_only=True)
+    confirm_password = serializers.CharField(
+        max_length=255, write_only=True, required=False
+    )
 
     class Meta:
         model = User
@@ -19,15 +21,18 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        validated_data.pop("confirm_password")
+        if validated_data.get("confirm_password"):
+            validated_data.pop("confirm_password")
         instance = super().create(validated_data)
         raw_password = validated_data.get("password")
-        instance.set_password(raw_password)
+        if raw_password:
+            instance.set_password(raw_password)
         instance.save()
         return instance
 
-    def validate_password(self, attrs):
+    def validate_password(self, password):
         confirmation_password = self.initial_data.get("confirm_password")
-        if not attrs == confirmation_password:
-            raise serializers.ValidationError("PASSWORD DOESNOT MATCH")
-        return attrs
+        if password and confirmation_password:
+            if password != confirmation_password:
+                raise serializers.ValidationError("PASSWORD DOESNOT MATCH")
+        return password
