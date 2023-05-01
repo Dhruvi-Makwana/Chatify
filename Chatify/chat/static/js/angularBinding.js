@@ -1,4 +1,5 @@
 var app = angular.module('ChatApp', []);
+
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('{');
     $interpolateProvider.endSymbol('}');
@@ -7,8 +8,18 @@ app.config(function($interpolateProvider) {
 
 app.controller('chatCtrl', function($scope, $http) {
       $scope.chatData = []
-       const person = {
-            username: "John",
+      $scope.UserData = []
+       const data = {
+            chat: "Hi ,Data binding with Angular JS",
+
         };
-        $scope.chatData.push(person)
+        $scope.chatData.push(data)
+
+       const person = {
+            username: "Karan"
+            username1: "jaydip"
+        };
+        $scope.UserData.push(person)
+
 });
+
