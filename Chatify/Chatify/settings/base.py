@@ -62,6 +62,7 @@ DATABASES = {
         "PASSWORD": "postgres",
         "HOST": "localhost",
         "PORT": "5432",
+        
     }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -197,6 +198,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "compressor",
+    "phonenumber_field",
     "chat",
 ]
 
@@ -235,6 +237,7 @@ CACHE_ENGINES = {
 
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
+AUTH_USER_MODEL = 'chat.User'
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
