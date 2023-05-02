@@ -21,8 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        if validated_data.get("confirm_password"):
-            validated_data.pop("confirm_password")
+        validated_data.pop("confirm_password", None)
         instance = super().create(validated_data)
         raw_password = validated_data.get("password")
         if raw_password:
