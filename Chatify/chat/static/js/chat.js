@@ -8,30 +8,79 @@ app.config(function($interpolateProvider) {
 
 app.controller('chatCtrl', function($scope, $http) {
 
-            $scope.UserData = []
-            const person = {
-                username: "Karan",
-                username1: "jaydip",
+$scope.currentUser = undefined;
+
+
+        $scope.chatData = [
+                {
+                id: 1,
+                name: "Karan",
                 profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
-                profile1: "http://127.0.0.1:8000/static/images/nature.jpeg"
-            };
-            $scope.UserData.push(person)
+                messages : {
+                    sender : [
+                    {
+                        user: "jaydip",
+                        profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
+                        message: "hiiii karan this is jaydip [const data]",
+                        id: 2
+                    }
+                    ],
+                    receiver : [
+                    {
+                        user: "karan",
+                        profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
+                        message: "hiiii karan this is receiver karan",
+                        id: 1
+                        }
+                       ]
+                }
+            },
+            {
+                    id: 2,
+                    name: "jaydip",
+                    profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
+                    messages : {
+                        sender : [
+                        {
+                            user: "jaydip",
+                            profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
+                            message: "hiiii karan this is jaydip",
+                            id: 2
+                        }
+                        ],
+                        receiver : [
+                        {
+                            user: "karan",
+                            profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
+                            message: "hiii karan this is receiver karan",
+                            id: 1
+                        }]
+                    }
+            }
+
+        ]
+        console.log($scope.chatData)
 
 
-   $scope.showChat = function(name) {
-        $scope.chatData = []
+    $scope.showChat = function(user) {
+            $scope.currentUser = user
+            console.log($scope.currentUser)
+    };
 
-       const data = {
-            user: "Chat with "+name,
-            name: name,
-            chat: "Hi ,This is "+ name,
-            chat2 : "hello"
+    $scope.sendChat = function(user){
+     var message = $scope.msgText;
+        alert($scope.msgText)
+        console.log(user)
+        console.log($scope.chatData[1].id)
 
-        };
-        $scope.chatData.push(data)
-        var message = $('.type_msg').val();
-        data.chat2 += message;
-           }
+        var a = $scope.chatData[1].id
+        if(user == a)
+        {
+            var text = $scope.msgText;
+            $scope.chatData[1].messages.sender.push(message);
+        }
+    }
+
 });
 
 
