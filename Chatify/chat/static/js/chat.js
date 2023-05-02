@@ -9,7 +9,7 @@ app.config(function($interpolateProvider) {
 app.controller('chatCtrl', function($scope, $http) {
 
 $scope.currentUser = undefined;
-
+$scope.msgText = {text: ""}
 
         $scope.chatData = [
                 {
@@ -59,28 +59,23 @@ $scope.currentUser = undefined;
             }
 
         ]
-        console.log($scope.chatData)
 
+        $scope.showChat = function(user) {
+                $scope.currentUser = user
 
-    $scope.showChat = function(user) {
-            $scope.currentUser = user
-            console.log($scope.currentUser)
-    };
+        };
 
-    $scope.sendChat = function(user){
-     var message = $scope.msgText;
-        alert($scope.msgText)
-        console.log(user)
-        console.log($scope.chatData[1].id)
-
-        var a = $scope.chatData[1].id
-        if(user == a)
-        {
-            var text = $scope.msgText;
-            $scope.chatData[1].messages.sender.push(message);
+        $scope.sendChat = function(user){
+             var message = $scope.msgText.text;
+             var currentUser = $scope.chatData.find(function(u) {
+                return u.id === user;
+             });
+            if (currentUser) {
+            currentUser.messages.sender.push({
+                  user: currentUser.name,
+                  profile: currentUser.profile,
+                  message: message,
+            });
+          }
         }
-    }
-
 });
-
-
