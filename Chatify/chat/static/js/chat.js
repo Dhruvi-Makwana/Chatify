@@ -1,8 +1,8 @@
 var app = angular.module('ChatApp', []);
 
 app.config(function($interpolateProvider) {
-    $interpolateProvider.startSymbol('{');
-    $interpolateProvider.endSymbol('}');
+    $interpolateProvider.startSymbol('{[');
+    $interpolateProvider.endSymbol(']}');
 });
 
 
@@ -78,4 +78,10 @@ $scope.msgText = {text: ""}
             });
           }
         }
+
+          $scope.status = 'online';
+          $scope.setStatus = function(status) {
+          console.log(status)
+          $scope.status = status;
+          }
 });
