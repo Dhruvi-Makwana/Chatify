@@ -1,5 +1,6 @@
  $(document).on("submit", "#login_form", function(event) {
-        console.log("hii")
+   var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
         event.preventDefault();
         event.stopImmediatePropagation();
         var formdata =  new FormData(this)
