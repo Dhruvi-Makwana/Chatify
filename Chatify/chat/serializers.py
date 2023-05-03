@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             "mobile_number",
             "password",
             "confirm_password",
+            "online",
         )
 
     def create(self, validated_data):

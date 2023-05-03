@@ -1,27 +1,24 @@
 {% extends 'chat/base.html' %}
-        {% load static %}
+{% load static %}
 {% block title %} Login {% endblock %}
-             {% block content %}
+{% block content %}
 <script src="{% static 'js/login.js' %}"></script>
- <script src="{% static 'js/ajax_request.js' %}"></script>
-    <div class="wrapper">
-      <div class="title">Login Form</div>
-      <form method="post" enctype="multipart/form-data" id="login_form">
-              {% csrf_token %}
+<div class="wrapper">
+   <div class="title">Login Form</div>
+   <form method="post" enctype="multipart/form-data" id="login_form">
+      {% csrf_token %}
+      <div class="field">
+         <input type="text" name="username" required>
+         <label>Username</label>
+      </div>
+      <div class="field">
+         <input type="password" name="password" required>
+         <label>Password</label>
+      </div>
+      <div class="field">
+         <input type="submit" value="Register" id="submit" onclick="login(event)">
+      </div>
+   </form>
+</div>
+{% endblock %}
 
-        <div class="field">
-          <input type="text" name="username" required>
-          <label>Username</label>
-        </div>
-
-        <div class="field">
-          <input type="password" name="password" required>
-          <label>Password</label>
-        </div>
-
-        <div class="field">
-          <input type="submit" value="Login">
-        </div>
-      </form>
-    </div>
-    {% endblock %}
