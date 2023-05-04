@@ -270,3 +270,15 @@ body,
         {
           background: #00000052;
         }
+        .profile-dropdown
+        {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        border:none;
+        }
+        .online-color {
+          background-color: #78e08f;
+        }
+
+        .offline-color {
+          background-color: #B2BEB5;
+        }

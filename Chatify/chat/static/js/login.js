@@ -1,9 +1,7 @@
- $(document).on("submit", "#login_form", function(event) {
-   var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+function login(e) {
+    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+    e.preventDefault();
+    var formdata = new FormData($('#login_form')[0]);
+    makeAjaxRequest('POST', csrfToken, "/login/", formdata, function(response) {})
+}
 
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        var formdata =  new FormData(this)
-        makeAjaxRequest('POST',csrfToken,"/login/", formdata, function(response){
-        })
-    })

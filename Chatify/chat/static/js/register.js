@@ -1,10 +1,8 @@
-
- $(document).on("submit", "#register_form", function(event) {
-    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        var formdata =  new FormData(this)
-        makeAjaxRequest('POST',csrfToken,"/register/", formdata, function(response){
-
+function register(e) {
+        e.preventDefault();
+        var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+        var formdata = new FormData($('#register_form')[0]);
+        makeAjaxRequest('POST', csrfToken, "/register/", formdata, function(response) {
         })
-    })
+}
+
