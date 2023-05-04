@@ -33,8 +33,9 @@ class UserListAPI(APIView):
 class UserOnlineAPIView(APIView):
     def put(self, request, *args, **kwargs):
         user = request.user.id
-        if request.data.get("online") == "true":
-            user.save(online=True)
-        else:
-            user.save(online=False)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        user.save(is_online=True if request.data.get("online") else False)
+        return Response(status=status.HTTP_200_OK)
+#         if request.data.get("online") == "true":
+#             user.save(online=True)
+#         else:
+#             user.save(online=False)
