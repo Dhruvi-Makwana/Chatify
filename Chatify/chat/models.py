@@ -6,6 +6,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 class User(AbstractUser):
     profile_photo = models.ImageField(upload_to="profile_photo/")
     mobile_number = PhoneNumberField(unique=True)
+    is_online = models.BooleanField(default=False, blank=True, null=True)
 
     def __str__(self):
         return self.username

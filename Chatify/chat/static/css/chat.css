@@ -262,3 +262,23 @@ body,
                 margin-bottom: 15px !important;
             }
         }
+        .userlist
+        {
+        text-decoration: none;
+        }
+        li:hover
+        {
+          background: #00000052;
+        }
+        .profile-dropdown
+        {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        border:none;
+        }
+        .online-color {
+          background-color: #78e08f;
+        }
+
+        .offline-color {
+          background-color: #B2BEB5;
+        }
