@@ -18,12 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
             "mobile_number",
             "password",
             "confirm_password",
-            "online",
+            "is_online",
         )
 
     def create(self, validated_data):
-        if validated_data.get("confirm_password"):
-            validated_data.pop("confirm_password")
+        validated_data.pop("confirm_password", None)
         instance = super().create(validated_data)
         raw_password = validated_data.get("password")
         if raw_password:
