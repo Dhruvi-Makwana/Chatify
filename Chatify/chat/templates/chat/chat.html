@@ -15,8 +15,8 @@
                         <span>Dhruvi</span>
                 </button>
                 <div class="dropdown-menu p-2">
-                  <div class="rounded m-1 p-2" ng-class="{'online-color': status == 'online'}"><input type="radio"  name="status" id="online" ng-click="setStatus('online')"><span class="p-2">Online</span></div>
-                  <div class="rounded m-1 p-2" ng-class="{'offline-color': status == 'offline'}"><input type="radio" name="status" id="offline" ng-click="setStatus('offline')"><span class="p-2">Offline</span></div>
+                    <div class="rounded m-1 p-2" ng-class="{'online-color': status == 'online'}"><input type="radio"  name="status" id="online" ng-click="setStatus('online','{{csrf_token}}')" checked="checked"><span class="p-2">Online</span></div>
+                    <div class="rounded m-1 p-2" ng-class="{'offline-color': status == 'offline'}"><input type="radio" name="status" id="offline" ng-click="setStatus('offline','{{csrf_token}}')"><span class="p-2">Offline</span></div>
                 </div>
            </div>
 
@@ -38,13 +38,13 @@
                                 <a href="#" class="userlist" ng-click="showChat(user)">
                                 <div class="d-flex bd-highlight">
                                     <div class="img_cont">
-                                        <img ng-src={[user.profile]}
+                                        <img ng-src={[user.profile_photo]}
                                             class="rounded-circle user_img">
                                         <span class="online_icon"></span>
                                     </div>
                                     <div class="user_info">
-                                        <span ng-bind="user.name"></span>
-                                        <p>Kalid is online</p>
+                                        <span ng-bind="user.full_name"></span>
+
                                     </div>
                                 </div>
                                 </a>

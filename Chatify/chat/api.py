@@ -1,8 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer
+from .serializers import UserSerializer, LoginSerializer, GetUserDataSerializer
 from .models import User
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.parsers import JSONParser, MultiPartParser
+from django.contrib.auth import authenticate
+from django.contrib.auth import login
+from django.http import JsonResponse
+
+from django.shortcuts import redirect, reverse
 
 
 class RegistrationApi(APIView):
@@ -26,8 +33,48 @@ class UserListAPI(APIView):
             return Response({"errors": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserOnlineAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        user = request.user.id
-        user.save(is_online=True if request.data.get("online") else False)
+class LoginAPIView(APIView):
+    def get(self, request):
         return Response(status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+
+        login_serializer = LoginSerializer(data=request.data)
+        login_serializer.is_valid()
+        user = authenticate(request=request, **login_serializer.validated_data)
+        if user:
+            login(request, user)
+            return Response(
+                {"logins": login_serializer.data}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                login_serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE
+            )
+
+
+class UserOnlineAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+
+        data = request.data.copy()
+        user = request.user
+        user.is_online = (
+            True
+            if data.get("status") == "online"
+            else False
+            if data.get("status") == "offline"
+            else user.is_online
+        )
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+class ShowUserData(APIView):
+    def get(self, request):
+        data = User.objects.all()
+        return JsonResponse(
+            {"UserData": list(GetUserDataSerializer(data, many=True).data)}
+        )

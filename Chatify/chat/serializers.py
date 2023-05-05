@@ -36,3 +36,33 @@ class UserSerializer(serializers.ModelSerializer):
             if password != confirmation_password:
                 raise serializers.ValidationError("PASSWORD DOESNOT MATCH")
         return password
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+
+class MessageSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    user = serializers.CharField()
+    profile = serializers.URLField()
+    message = serializers.CharField()
+
+
+class GetUserDataSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    messages = MessageSerializer(read_only=True)
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "profile_photo",
+            "is_online",
+            "full_name",
+            "messages",
+        )

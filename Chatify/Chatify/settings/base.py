@@ -62,7 +62,6 @@ DATABASES = {
         "PASSWORD": "postgres",
         "HOST": "localhost",
         "PORT": "5432",
-        
     }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -187,6 +186,7 @@ ROOT_URLCONF = "Chatify.urls"
 WSGI_APPLICATION = "Chatify.wsgi.application"
 
 INSTALLED_APPS = [
+    "channels",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -237,15 +237,5 @@ CACHE_ENGINES = {
 
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
-AUTH_USER_MODEL = 'chat.User'
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 10,
-}
-
+AUTH_USER_MODEL = "chat.User"
 SENTRY_DSN = env.str("SENTRY_DSN", "")

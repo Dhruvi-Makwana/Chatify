@@ -14,46 +14,20 @@ app.controller('chatCtrl', function($scope, $http) {
         text: ""
     }
 
-    $scope.chatData = [{
-            id: 1,
-            name: "Karan",
-            profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
-            messages: {
-                sender: [{
-                    user: "jaydip",
-                    profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
-                    message: "hiiii karan this is jaydip [const data]",
-                    id: 2
-                }],
-                receiver: [{
-                    user: "karan",
-                    profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
-                    message: "hiiii karan this is receiver karan",
-                    id: 1
-                }]
+    $scope.ajaxGet = function(url, callback = null) {
+        $http.get(url).then(function(response) {
+            if (callback) {
+                callback(response)
             }
-        },
-        {
-            id: 2,
-            name: "jaydip",
-            profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
-            messages: {
-                sender: [{
-                    user: "jaydip",
-                    profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
-                    message: "hiiii karan this is jaydip",
-                    id: 2
-                }],
-                receiver: [{
-                    user: "karan",
-                    profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
-                    message: "hiii karan this is receiver karan",
-                    id: 1
-                }]
-            }
-        }
+        });
+    }
 
-    ]
+    $scope.chatData = []
+
+    $scope.ajaxGet('api/userdata/', function(response) {
+        $scope.chatData = response.data.UserData;
+    })
+
 
     $scope.showChat = function(user) {
         $scope.currentUser = user
@@ -73,8 +47,13 @@ app.controller('chatCtrl', function($scope, $http) {
             });
         }
     }
-    $scope.setStatus = function(status) {
+
+
+    $scope.setStatus = function(status, csrf_token) {
         $scope.status = status;
+        var formData = new FormData();
+        formData.append('status', $scope.status)
+        makeAjaxRequest('POST', csrf_token, "/api/online/", formData, function(response) {})
     }
 });
 
