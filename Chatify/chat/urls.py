@@ -23,6 +23,8 @@ urlpatterns = [
     path("register/", register, name="register"),
     path("login/", login, name="login1"),
     path("chat/", chat, name="showChat"),
+    # path("websocket/", websocket, name="websocket"),
+
 ]
 
 urlpatterns += urlpatterns_api

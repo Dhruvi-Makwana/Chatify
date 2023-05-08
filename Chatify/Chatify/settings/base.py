@@ -183,10 +183,10 @@ MIDDLEWARE = [
 ROOT_URLCONF = "Chatify.urls"
 
 # Python dotted path to the WSGI application used by Django"s runserver.
-WSGI_APPLICATION = "Chatify.wsgi.application"
+
 
 INSTALLED_APPS = [
-    "channels",
+
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -202,6 +202,8 @@ INSTALLED_APPS = [
     "chat",
 ]
 
+# WSGI_APPLICATION = "Chatify.wsgi.application"
+ASGI_APPLICATION = "Chatify.asgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

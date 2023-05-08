@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Chat Applcation</h1>
+    <textarea id="chatlog" cols="100" rows="20"></textarea><br>
+    <input type="text" id="chat-message-input" size="100"><br>
+    <input type="button" value="send" id="chat-message-submit">
+</body>
+<script>
+
+
+let chatSocket = null;
+
+function connect() {
+    chatSocket = new WebSocket("ws://" + window.location.host + "/chat/sc/");
+    chatSocket.onopen = function(e) {
+        console.log("Successfully connected to the WebSocket.");
+    }
+
+    chatSocket.onclose = function(e) {
+        console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
+        setTimeout(function() {
+            console.log("Reconnecting...");
+            connect();
+        }, 2000);
+    };
+
+    chatSocket.onerror = function(err) {
+        console.log("WebSocket encountered an error: " + err.message);
+        console.log("Closing the socket.");
+        chatSocket.close();
+    }
+}
+connect();
+</script>
+</html>

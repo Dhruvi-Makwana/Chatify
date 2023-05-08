@@ -11,3 +11,7 @@ def login(request):
 
 def chat(request):
     return render(request, "chat/chat.html")
+
+
+# def websocket(request):
+#     return render(request, 'chat/websocket_connection.html')
