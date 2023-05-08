@@ -4,7 +4,7 @@ from .api import RegistrationApi, UserListAPI
 
 
 urlpatterns_api = [
-    path("api/register/", RegistrationApi.as_view(), name="RegistrationApi"),
+    path("api/register/", RegistrationApi.as_view(), name="api/register/"),
     path("api/user/", UserListAPI.as_view(), name="UserListAPI"),
 ]
 
