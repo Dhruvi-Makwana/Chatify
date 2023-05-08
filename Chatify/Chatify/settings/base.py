@@ -186,7 +186,7 @@ ROOT_URLCONF = "Chatify.urls"
 
 
 INSTALLED_APPS = [
-
+    "channels",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",

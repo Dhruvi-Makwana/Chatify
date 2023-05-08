@@ -1,4 +1,4 @@
-from .views import register, login, chat
+from .views import register, login, chat, websocket
 from django.urls import path
 from .api import (
     RegistrationApi,
@@ -23,7 +23,7 @@ urlpatterns = [
     path("register/", register, name="register"),
     path("login/", login, name="login1"),
     path("chat/", chat, name="showChat"),
-    # path("websocket/", websocket, name="websocket"),
+    path("websocket/", websocket, name="websocket"),
 
 ]
 

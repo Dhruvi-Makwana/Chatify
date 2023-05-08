@@ -11,35 +11,34 @@
 
 <body>
     <h1>Chat Applcation</h1>
-    <textarea id="chatlog" cols="100" rows="20"></textarea><br>
-    <input type="text" id="chat-message-input" size="100"><br>
+    <textarea id="chatlog" cols="50" rows="2"></textarea><br>
+    <input type="text" id="chat-message-input" size="50"><br>
     <input type="button" value="send" id="chat-message-submit">
 </body>
 <script>
 
-
-let chatSocket = null;
-
-function connect() {
-    chatSocket = new WebSocket("ws://" + window.location.host + "/chat/sc/");
-    chatSocket.onopen = function(e) {
-        console.log("Successfully connected to the WebSocket.");
+    var ws = new WebSocket('ws://127.0.0.1:8000/chat/sc/')
+    ws.onopen = function () {
+        console.log('websocket conection open')
     }
 
-    chatSocket.onclose = function(e) {
-        console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
-        setTimeout(function() {
-            console.log("Reconnecting...");
-            connect();
-        }, 2000);
-    };
-
-    chatSocket.onerror = function(err) {
-        console.log("WebSocket encountered an error: " + err.message);
-        console.log("Closing the socket.");
-        chatSocket.close();
+    ws.onmessage = function (event) {
+        const data = JSON.parse(event.data)
+        console.log(data.msg)
+        document.getElementById('chatlog').innerHTML += data.msg + '\n'
     }
-}
-connect();
+    ws.onclose = function (event) {
+        console.log("message close successfully")
+    }
+
+    document.getElementById('chat-message-submit').onclick = function (event) {
+        const messageInputDom = document.getElementById('chat-message-input')
+        const message = messageInputDom.value
+        ws.send(JSON.stringify({
+            'msg': message
+        }))
+        messageInputDom.value = ''
+    }
 </script>
+
 </html>
