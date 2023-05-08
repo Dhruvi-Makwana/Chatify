@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer, LoginSerializer, GetUserDataSerializer
 from .models import User
+from .utils import *
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.parsers import JSONParser, MultiPartParser
 from django.contrib.auth import authenticate
@@ -14,8 +15,10 @@ from django.shortcuts import redirect, reverse
 
 class RegistrationApi(APIView):
     def post(self, request):
+
         try:
-            serializer = UserSerializer(data=request.data)
+
+            serializer = UserSerializer(data=set_contact_number(request.data))
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

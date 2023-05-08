@@ -21,23 +21,10 @@
     ws.onopen = function () {
         console.log('websocket conection open')
     }
-
-    ws.onmessage = function (event) {
-        const data = JSON.parse(event.data)
-        console.log(data.msg)
-        document.getElementById('chatlog').innerHTML += data.msg + '\n'
-    }
     ws.onclose = function (event) {
         console.log("message close successfully")
     }
 
-    document.getElementById('chat-message-submit').onclick = function (event) {
-        const messageInputDom = document.getElementById('chat-message-input')
-        const message = messageInputDom.value
-        ws.send(JSON.stringify({
-            'msg': message
-        }))
-        messageInputDom.value = ''
     }
 </script>
 
