@@ -9,7 +9,10 @@ from .utils import validate_contact_number
 class RegistrationApi(APIView):
     def post(self, request):
         try:
-            serializer = UserSerializer(data=validate_contact_number(request.data))
+            request.data["mobile_number"] = validate_contact_number(
+                request.data.get("mobile_number")
+            )
+            serializer = UserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

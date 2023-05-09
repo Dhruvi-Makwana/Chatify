@@ -2,18 +2,17 @@ from rest_framework import serializers
 from utils.messages import INVALID_PHONE_NUMBER
 
 
-def validate_contact_number(data):
-    mobile_number = data.get("mobile_number")
+def validate_contact_number(mobile_number):
     if len(mobile_number) > 10 and len(mobile_number) <= 13:
         if mobile_number[:2] == "91":
-            data["mobile_number"] = "+" + mobile_number
+            mobile_number = "+" + mobile_number
         elif mobile_number[:3] != "+91":
             raise serializers.ValidationError({"phone_number": INVALID_PHONE_NUMBER})
     elif len(mobile_number) == 10:
         if mobile_number[:3] == "+91":
             raise serializers.ValidationError({"phone_number": INVALID_PHONE_NUMBER})
         else:
-            data["mobile_number"] = "+91" + mobile_number
+            mobile_number = "+91" + mobile_number
     else:
         raise serializers.ValidationError({"phone_number": INVALID_PHONE_NUMBER})
-    return data
+    return mobile_number
