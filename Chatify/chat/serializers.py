@@ -37,7 +37,3 @@ class UserSerializer(serializers.ModelSerializer):
             if password != confirmation_password:
                 raise serializers.ValidationError("PASSWORD DOESNOT MATCH")
         return password
-
-    def validate_mobile_number(self, mobile_number):
-        breakpoint()
-        return mobile_number
