@@ -39,7 +39,7 @@ html,body{
 .wrapper form .field{
   height: 50px;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 40px;
   position: relative;
 }
 .wrapper form .field input{
@@ -136,3 +136,4 @@ form .signup-link a:hover{
   padding-left: 20px;
   margin: 5px;
 }
+

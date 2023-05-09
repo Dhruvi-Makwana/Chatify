@@ -11,7 +11,7 @@
    <form method="post" enctype="multipart/form-data" id="register_form">
       {% csrf_token %}
       <div class="field">
-         <input type="text" name="username" required >
+         <input type="text" name="username" required>
          <label>Username</label>
          <small class="errMsg" id="username"></small>
       </div>
@@ -29,6 +29,7 @@
          <input type="password" name="confirm_password" required>
          <label>Confirm_Password</label>
          <small class="errMsg" id="confirm_password"></small>
+        
       </div>
       <div class="field">
          <input type="text" name="mobile_number" required>
@@ -36,12 +37,12 @@
          <small class="errMsg" id="phonenumber"></small>
       </div>
       <div class="field">
-         <input type="file" class="pt-2" name="profile_photo" required>
+         <input type="file" class="pt-2" name="profile_photo">
       </div>
       <div class="field">
          <input type="submit" value="Register" id="submit" onclick="register(event)">
       </div>
-      <div class="signup-link">Already a user ?..Login</div>
+      <div class="signup-link">Already a user ?..<a href="{% url 'chat:loginUI' %}">Login</a></div>
    </form>
 </div>
 {% endblock %}

@@ -3,14 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer, LoginSerializer, GetUserDataSerializer
 from .models import User
-from .utils import *
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.parsers import JSONParser, MultiPartParser
+from .utils import set_contact_number
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.http import JsonResponse
-
-from django.shortcuts import redirect, reverse
+from django.http import HttpResponseRedirect
 
 
 class RegistrationApi(APIView):
@@ -23,7 +20,9 @@ class RegistrationApi(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({"errors": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class UserListAPI(APIView):
@@ -37,23 +36,23 @@ class UserListAPI(APIView):
 
 
 class LoginAPIView(APIView):
-    def get(self, request):
-        return Response(status=status.HTTP_200_OK)
-
     def post(self, request, *args, **kwargs):
-
-        login_serializer = LoginSerializer(data=request.data)
-        login_serializer.is_valid()
-        user = authenticate(request=request, **login_serializer.validated_data)
-        if user:
-            login(request, user)
-            return Response(
-                {"logins": login_serializer.data}, status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                login_serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE
-            )
+        try:
+            login_serializer = LoginSerializer(data=request.data)
+            login_serializer.is_valid()
+            user = authenticate(request=request, **login_serializer.validated_data)
+            if user:
+                login(request, user)
+                return Response(
+                    {"login": login_serializer.data}, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {"error": "enter a valid username and password"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserOnlineAPIView(APIView):
@@ -62,7 +61,7 @@ class UserOnlineAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
 
-        data = request.data.copy()
+        data = request.data
         user = request.user
         user.is_online = (
             True
@@ -75,7 +74,7 @@ class UserOnlineAPIView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class ShowUserData(APIView):
+class UserDataSerializer(APIView):
     def get(self, request):
         data = User.objects.all()
         return JsonResponse(

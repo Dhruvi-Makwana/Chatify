@@ -3,14 +3,21 @@ function register(e) {
         var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
         var formdata = new FormData($('#register_form')[0]);
         makeAjaxRequest('POST', csrfToken, "/api/register/", formdata, function (response) {
-             console.log(response)
-             const errors = JSON.stringify(response.errors);
-       
-                // Update the text content of the small tags based on the error messages
-        document.getElementById('email').innerHTML = errors.email[0].string;
-        document.getElementById('phonenumber').innerHTML = errors.mobile_number[0].string;
-        document.getElementById('password').innerHTML = errors.password[0].string;
-        
-        })
+            var error = JSON.parse(response.responseText).errors;
+            var username_err = JSON.parse(response.responseText).errors.username;
+            var number = JSON.parse(response.responseText).errors.mobile_number;
+            var pass_error = JSON.parse(response.responseText).errors.password;
+            var mail_error = JSON.parse(response.responseText).errors.email;
+            if(error){
+                    $("#username").html(username_err);
+                    $("#phonenumber").html(number);
+                    $("#password").html(pass_error);
+                    $("#confirm_password").html(pass_error);
+                    $("#email").html(mail_error);
+            }
+            else{
+                    window.location.href  = '/login/';
+            }
+            })
 }
-
+   

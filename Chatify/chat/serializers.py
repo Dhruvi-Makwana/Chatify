@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
         confirmation_password = self.initial_data.get("confirm_password")
         if password and confirmation_password:
             if password != confirmation_password:
-                raise serializers.ValidationError("PASSWORD DOESNOT MATCH")
+                raise serializers.ValidationError("Password doesn't match")
         return password
 
 

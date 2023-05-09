@@ -7,8 +7,11 @@
 
 <div class="wrapper">
    <div class="title">Login Form</div>
+  
+
    <form method="post" enctype="multipart/form-data" id="login_form">
       {% csrf_token %}
+      <small class="errMsg mt-2" id="error"></small>
       <div class="field">
          <input type="text" name="username" required>
          <label>Username</label>
