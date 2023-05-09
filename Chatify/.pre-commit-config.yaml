@@ -1,5 +1,23 @@
+
 repos:
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
       - id: black
+
+  # - repo: https://github.com/dhruvmanila/remove-print-statements
+  #   hooks:
+  #     - id: remove_print_statement
+  #       name: check-remove_print_statement
+  #       language: system
+  #       entry: ./Chatify/run_remove_print_statement.sh
+  #       pass_filenames: false
+  #       always_run: true
+
+
+  - repo: https://github.com/dhruvmanila/remove-print-statements
+    rev: 'v0.5.1'  # Replace with latest tag on GitHub
+    hooks:
+      - id: remove-print-statements
+
+
