@@ -3,11 +3,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer
 from .models import User
+from .utils import validate_contact_number
 
 
 class RegistrationApi(APIView):
     def post(self, request):
         try:
+            request.data["mobile_number"] = validate_contact_number(
+                request.data.get("mobile_number")
+            )
             serializer = UserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()

@@ -1,5 +1,13 @@
+
+
 repos:
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
       - id: black
+
+  - repo: https://github.com/dhruvmanila/remove-print-statements
+    rev: 'v0.5.1'  
+    hooks:
+      - id: remove-print-statements
+      
