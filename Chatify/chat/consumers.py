@@ -9,7 +9,7 @@ class MyChatConsumer(SyncConsumer):
         self.send({"type": "websocket.accept"})
 
     def websocket_receive(self, event):
-        print("message Recevied", event)
+        pass
 
     def websocket_disconnect(self, event):
         pass
