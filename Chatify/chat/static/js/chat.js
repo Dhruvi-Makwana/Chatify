@@ -57,3 +57,10 @@ app.controller('chatCtrl', function($scope, $http) {
     }
 });
 
+  var ws = new WebSocket('ws://127.0.0.1:8000/chat/sc/')
+    ws.onopen = function () {
+        console.log('websocket conection open')
+    }
+    ws.onclose = function (event) {
+        console.log("message close successfully")
+    }
