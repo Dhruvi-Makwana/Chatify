@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer, LoginSerializer, GetUserDataSerializer
 from .models import User
-from .utils import set_contact_number
+from .utils import validate_contact_number
+
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.http import JsonResponse
@@ -14,8 +15,10 @@ class RegistrationApi(APIView):
     def post(self, request):
 
         try:
-
-            serializer = UserSerializer(data=set_contact_number(request.data))
+            request.data["mobile_number"] = validate_contact_number(
+                request.data.get("mobile_number")
+            )
+            serializer = UserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -56,9 +59,6 @@ class LoginAPIView(APIView):
 
 
 class UserOnlineAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_200_OK)
-
     def post(self, request, *args, **kwargs):
 
         data = request.data

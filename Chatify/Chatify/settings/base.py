@@ -122,7 +122,7 @@ MEDIA_URL = "/media/"
 # Don"t put anything in this directory yourself; store your static files
 # in apps" "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-# STATIC_ROOT = normpath(join(PROJECT_ROOT, "assets"))
+STATIC_ROOT = normpath(join(PROJECT_ROOT, "assets"))
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -133,8 +133,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don"t forget to use absolute paths, not relative paths.
-    # normpath(join(PROJECT_ROOT, "static")),
-    [os.path.join(BASE_DIR, 'static')]
+    normpath(join(PROJECT_ROOT, "static")),
+
 )
 
 # List of finder classes that know how to find static files in
@@ -144,7 +144,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
 )
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Make this unique, and don"t share it with anybody.
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
 
@@ -185,7 +185,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = "Chatify.urls"
 
 # Python dotted path to the WSGI application used by Django"s runserver.
-
 
 INSTALLED_APPS = [
     "channels",

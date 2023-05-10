@@ -38,8 +38,7 @@
                                 <a href="#" class="userlist" ng-click="showChat(user)">
                                 <div class="d-flex bd-highlight">
                                     <div class="img_cont">
-                                        <img ng-src={[user.profile_photo]}
-                                            class="rounded-circle user_img">
+                                        <img ng-src={[user.profile_photo]} class="rounded-circle user_img">
                                         <span class="online_icon"></span>
                                     </div>
                                     <div class="user_info">
@@ -61,7 +60,7 @@
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="img_cont">
-                                <img ng-src={[currentUser.profile]}
+                                <img ng-src={[currentUser.profile_photo]}
                                     class="rounded-circle user_img">
                                 <span class="online_icon"></span>
                             </div>
@@ -80,7 +79,7 @@
                             <!-- receive message showing div -->
                             <div class="d-flex justify-content-start mb-4" ng-repeat="message in currentUser.messages.receiver">
                                 <div class="img_cont_msg">
-                                    <img ng-src={[message.profile]} class="rounded-circle user_img_msg">
+                                    <img ng-src={[message.profile_photo]} class="rounded-circle user_img_msg">
                                 </div>
                                 <div class="msg_cotainer" >
                                     <p ng-bind="message.message"></p>
