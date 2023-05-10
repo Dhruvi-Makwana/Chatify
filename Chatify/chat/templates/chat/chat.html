@@ -5,7 +5,7 @@
 
 
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-<script src="{% static 'js/chat.js' %}"></script>
+<script src="{% static 'js/chat.js' %}?v=1.2"></script>
 
     <div class="container-fluid h-100" ng-app="ChatApp" ng-controller="chatCtrl">
             <!-- porofile dropdown -->
@@ -118,13 +118,7 @@
     </div>
 <script>
 
-    var ws = new WebSocket('ws://127.0.0.1:8000/chat/sc/')
-    ws.onopen = function () {
-        console.log('websocket conection open')
-    }
-    ws.onclose = function (event) {
-        console.log("message close successfully")
-    }
+
 
 </script>
 {% endblock %}

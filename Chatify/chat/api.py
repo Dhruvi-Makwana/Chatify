@@ -9,22 +9,30 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
+from rest_framework.serializers import ValidationError
 
 
 class RegistrationApi(APIView):
     def post(self, request):
 
         try:
-            request.data["mobile_number"] = validate_contact_number(
-                request.data.get("mobile_number")
+            data = request.data.dict()
+            data["mobile_number"] = validate_contact_number(
+                data.get("mobile_number")
             )
-            serializer = UserSerializer(data=request.data)
+
+            serializer = UserSerializer(data=data) #add block except validation as e
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
+        except ValidationError as err:
+            print(f"hiiiiiiii {str(err)}")
             return Response(
                 {"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"errors": str(e)}, status=status.HTTP_400_BAD_REQUEST
             )
 
 
@@ -49,32 +57,27 @@ class LoginAPIView(APIView):
                 return Response(
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
-            else:
-                return Response(
-                    {"error": "enter a valid username and password"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            # else:
+            return Response(
+                {"error": "enter a valid username and password"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserOnlineAPIView(APIView):
+class VisibilityStatusAPI(APIView):
     def post(self, request, *args, **kwargs):
 
         data = request.data
         user = request.user
-        user.is_online = (
-            True
-            if data.get("status") == "online"
-            else False
-            if data.get("status") == "offline"
-            else user.is_online
-        )
+        data.get("status").lower().strip() == "online"
+        user.is_online =data.get("status").lower().strip() == "online"
         user.save()
         return Response(status=status.HTTP_200_OK)
 
 
-class UserDataSerializer(APIView):
+class OnlineUserAPI(APIView):
     def get(self, request):
         data = User.objects.all()
         return JsonResponse(

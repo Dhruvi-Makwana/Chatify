@@ -13,6 +13,11 @@ function makeAjaxRequest(methodType, csrfToken, url, data, callback)
                 callback(data)
             }
         },
+        error: function (data) {
+             if (callback) {
+                callback(data)
+            }
+        },
 
         cache: false,
         contentType: false,

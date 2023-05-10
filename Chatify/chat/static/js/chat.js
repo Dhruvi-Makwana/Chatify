@@ -1,3 +1,5 @@
+
+
 var app = angular.module('ChatApp', []);
 
 app.config(function($interpolateProvider) {
@@ -12,6 +14,15 @@ app.controller('chatCtrl', function($scope, $http) {
     $scope.status = 'online';
     $scope.msgText = {
         text: ""
+    }
+    console.log("webcokds")
+    var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
+
+    ws.onopen = function () {
+        console.log('websocket conection open')
+    }
+    ws.onclose = function (event) {
+        console.log("message close successfully")
     }
 
     $scope.ajaxGet = function(url, callback = null) {
@@ -57,10 +68,5 @@ app.controller('chatCtrl', function($scope, $http) {
     }
 });
 
-  var ws = new WebSocket('ws://127.0.0.1:8000/chat/sc/')
-    ws.onopen = function () {
-        console.log('websocket conection open')
-    }
-    ws.onclose = function (event) {
-        console.log("message close successfully")
-    }
+
+

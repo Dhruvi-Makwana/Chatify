@@ -3,7 +3,7 @@ from channels.exceptions import StopConsumer
 from asgiref.sync import async_to_sync
 
 
-class MyChatConsumer(SyncConsumer):
+class ChatConsumer(SyncConsumer):
     def websocket_connect(self, event):
         print("connection Accept")
         self.send({"type": "websocket.accept"})
