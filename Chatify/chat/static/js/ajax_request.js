@@ -21,3 +21,18 @@ function makeAjaxRequest(methodType, csrfToken, url, data, callback) {
     });
 }
 
+function ajaxGet(methodType, url, callback) {
+    $.ajax({
+        method: methodType,
+        url: url,
+        contentType: false,
+        success: function (data) {
+            if (callback) {
+                callback(data)
+            }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+}
