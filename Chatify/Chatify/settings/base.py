@@ -62,7 +62,6 @@ DATABASES = {
         "PASSWORD": "postgres",
         "HOST": "localhost",
         "PORT": "5432",
-        
     }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -184,9 +183,10 @@ MIDDLEWARE = [
 ROOT_URLCONF = "Chatify.urls"
 
 # Python dotted path to the WSGI application used by Django"s runserver.
-WSGI_APPLICATION = "Chatify.wsgi.application"
+# WSGI_APPLICATION = "Chatify.wsgi.application"
 
 INSTALLED_APPS = [
+    "channels",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -237,7 +237,7 @@ CACHE_ENGINES = {
 
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
-AUTH_USER_MODEL = 'chat.User'
+AUTH_USER_MODEL = "chat.User"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -249,3 +249,14 @@ REST_FRAMEWORK = {
 }
 
 SENTRY_DSN = env.str("SENTRY_DSN", "")
+
+ASGI_APPLICATION = "Chatify.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
