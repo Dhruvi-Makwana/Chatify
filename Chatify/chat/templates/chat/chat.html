@@ -8,6 +8,11 @@
 <script src="{% static 'js/chat.js' %}?v=1.2"></script>
 
     <div class="container-fluid h-100" ng-app="ChatApp" ng-controller="chatCtrl">
+         <div class="col d-flex flex-row-reverse">
+                <a type="button" href="{% url 'chat:logout' %}" class="float-end btn btncolor">Logout</a>
+            </div>
+
+
             <!-- porofile dropdown -->
            <div class="dropdown d-flex flex-row-reverse mt-2">
                 <button type="button" class="btn btn-primary dropdown-toggle profile-dropdown" data-bs-toggle="dropdown">
@@ -65,7 +70,7 @@
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
-                                <span ng-bind="currentUser.name"></span>
+                                <span ng-bind="currentUser.full_name"></span>
                                 <p>1767 Messages</p>
                             </div>
                         </div>

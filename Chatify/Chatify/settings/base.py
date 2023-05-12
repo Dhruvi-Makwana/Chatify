@@ -134,7 +134,6 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don"t forget to use absolute paths, not relative paths.
     normpath(join(PROJECT_ROOT, "static")),
-
 )
 
 # List of finder classes that know how to find static files in
@@ -179,7 +178,6 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
 ]
 
 ROOT_URLCONF = "Chatify.urls"
@@ -243,3 +241,4 @@ CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 AUTH_USER_MODEL = "chat.User"
 SENTRY_DSN = env.str("SENTRY_DSN", "")
 
+LOGOUT_REDIRECT_URL = "/"

@@ -60,6 +60,7 @@ class GetUserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "id",
             "username",
             "profile_photo",
             "is_online",
