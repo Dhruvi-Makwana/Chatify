@@ -2,7 +2,6 @@ from channels.consumer import SyncConsumer, AsyncConsumer
 from channels.exceptions import StopConsumer
 from asgiref.sync import async_to_sync
 import json
-from asgiref.sync import async_to_sync
 
 
 class ChatConsumer(SyncConsumer):
@@ -15,7 +14,12 @@ class ChatConsumer(SyncConsumer):
             {
                 "type": "websocket.send",
                 "text": json.dumps(
-                    {"user_id": self.scope["user"].id, "status": status}
+                    {
+                        "id": self.scope["user"].id,
+                        "full_name": self.scope["user"].get_full_name(),
+                        "profile_photo": self.scope["user"].profile_photo.url,
+                        "status": status,
+                    }
                 ),
             }
         )

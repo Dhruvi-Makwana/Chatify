@@ -9,28 +9,48 @@ app.controller('chatCtrl', function($scope, $http) {
 	var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
 
 	ws.onopen = function() {
+		console.log("websocket connection open")
 		}
-	ws.onmessage = function(e) {
 
+		$scope.remove = function(chat) { 
+			var index = $scope.chatData.indexOf(chat);
+			$scope.chatData.splice(index, 1);     
+		  }
+
+
+
+	ws.onmessage = function(e,) {
+		console.log("websocket onmessage open")
 		let userDetail = JSON.parse(e.data)
 		if (userDetail.status == "offline") {
 			console.log($scope.chatData)
-			for (i = 0; i <= $scope.chatData.length; i++) {
-				console.log($scope.chatData[i].id)
-				if ($scope.chatData[i].id == userDetail.user_id) {
-					$scope.chatData.pop(userDetail.user_id)
+			for(chat of $scope.chatData) {
+				
+				if (chat["id"] == userDetail.id) {
+					$scope.remove(chat)
+					console.log("########")
+					console.log($scope.chatData)
+					
 				}
 			}
+
+		}
+		else if(userDetail.status == "online")
+		{
+			 $scope.$apply(function (){
+                    $scope.chatData.push(userDetail)
+                    });
 		}
 	}
 
-	function setUserStatus(status) {
+		function setUserStatus(status) {
 		ws.send(JSON.stringify({
 			'status': status
 		}))
 	}
 
 	ws.onclose = function(event) {
+		console.log("close event")
 	}
 
 
@@ -40,6 +60,7 @@ app.controller('chatCtrl', function($scope, $http) {
 	$scope.msgText = {
 		text: ""
 	}
+
 
 	$scope.ajaxGet = function(url, callback = null) {
 		$http.get(url).then(function(response) {

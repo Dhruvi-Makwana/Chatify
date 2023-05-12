@@ -5,7 +5,7 @@
 
 
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-<script src="{% static 'js/chat.js' %}?v=1.2"></script>
+<script src="{% static 'js/chat.js' %}"></script>
 
     <div class="container-fluid h-100" ng-app="ChatApp" ng-controller="chatCtrl">
          <div class="col d-flex flex-row-reverse">
@@ -17,7 +17,7 @@
            <div class="dropdown d-flex flex-row-reverse mt-2">
                 <button type="button" class="btn btn-primary dropdown-toggle profile-dropdown" data-bs-toggle="dropdown">
                     <img src="{{request.user.profile_photo.url}}" height="25px" width="25px" class="rounded-circle m-2 pe-2">
-                    <span>{{request.user.username}}</span>
+                    <span>{{request.user.get_full_name}}</span>
                 </button>
                 <div class="dropdown-menu p-2">
                     <div class="rounded m-1 p-2" ng-class="{'online-color': status == 'online'}"><input type="radio"  name="status" id="online" ng-click="setStatus('online','{{csrf_token}}')" checked="checked"><span class="p-2">Online</span></div>
