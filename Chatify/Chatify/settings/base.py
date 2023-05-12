@@ -4,7 +4,7 @@ Django settings for Chatify project.
 
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
-
+import os
 import environ
 
 ########## PATH CONFIGURATION
@@ -183,7 +183,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = "Chatify.urls"
 
 # Python dotted path to the WSGI application used by Django"s runserver.
-# WSGI_APPLICATION = "Chatify.wsgi.application"
 
 INSTALLED_APPS = [
     "channels",
@@ -202,6 +201,8 @@ INSTALLED_APPS = [
     "chat",
 ]
 
+# WSGI_APPLICATION = "Chatify.wsgi.application"
+# ASGI_APPLICATION = "Chatify.asgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -250,6 +251,8 @@ REST_FRAMEWORK = {
 
 SENTRY_DSN = env.str("SENTRY_DSN", "")
 
+LOGOUT_REDIRECT_URL = "/"
+
 ASGI_APPLICATION = "Chatify.asgi.application"
 
 CHANNEL_LAYERS = {
@@ -260,3 +263,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
