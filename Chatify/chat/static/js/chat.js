@@ -6,7 +6,7 @@ app.config(function($interpolateProvider) {
 });
 
 app.controller('chatCtrl', function($scope, $http) {
-	var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
+	var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/my_group/')
 
 	ws.onopen = function() {
 		console.log("websocket connection open")
