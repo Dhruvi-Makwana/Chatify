@@ -49,6 +49,8 @@ class LoginAPIView(APIView):
             user = authenticate(request=request, **login_serializer.validated_data)
             if user:
                 login(request, user)
+                user.is_online = True
+                user.save()
                 return Response(
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
@@ -65,19 +67,6 @@ class VisibilityStatusAPI(APIView):
         user = request.user
         user.is_online = request.data.get("status").lower().strip() == "online"
         user.save()
-        # channel_layer = get_channel_layer()
-        # print(channel_layer)
-        # async_to_sync(channel_layer.send)(
-        #     {'type': 'websocket.send', 'message': json.dumps(
-        #             {
-        #                 "id": user.id,
-        #                 "full_name": user.get_full_name(),
-        #                 "profile_photo": user.profile_photo.url,
-        #                 "status": user.is_online,
-        #             }
-        #         ),
-        #      }
-        # )
         return Response(status=status.HTTP_200_OK)
 
 
