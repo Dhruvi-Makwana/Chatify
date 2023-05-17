@@ -185,7 +185,6 @@ ROOT_URLCONF = "Chatify.urls"
 # Python dotted path to the WSGI application used by Django"s runserver.
 
 INSTALLED_APPS = [
-    "channels",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -198,7 +197,9 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "compressor",
     "phonenumber_field",
+    "daphne",
     "chat",
+    "channels",
 ]
 
 # WSGI_APPLICATION = "Chatify.wsgi.application"

@@ -43,19 +43,18 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 
-class MessageSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    user = serializers.CharField()
-    profile = serializers.URLField()
-    message = serializers.CharField()
-
-
 class GetUserDataSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    messages = MessageSerializer(read_only=True)
+    status = serializers.SerializerMethodField()
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
+    def get_profile_photo(self, obj):
+        return obj.profile_photo.url
+
+    def get_status(self, obj):
+        return "offline" if obj.is_online else "online"
 
     class Meta:
         model = User
@@ -65,5 +64,5 @@ class GetUserDataSerializer(serializers.ModelSerializer):
             "profile_photo",
             "is_online",
             "full_name",
-            "messages",
+            "status",
         )

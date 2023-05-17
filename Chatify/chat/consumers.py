@@ -3,30 +3,6 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 import json
 
 
-class ChatConsumer(SyncConsumer):
-    def websocket_connect(self, event):
-        self.send({"type": "websocket.accept"})
-
-    def websocket_receive(self, event):
-        status = json.loads(event.get("text")).get("status")
-        self.send(
-            {
-                "type": "websocket.send",
-                "text": json.dumps(
-                    {
-                        "id": self.scope["user"].id,
-                        "full_name": self.scope["user"].get_full_name(),
-                        "profile_photo": self.scope["user"].profile_photo.url,
-                        "status": status,
-                    }
-                ),
-            }
-        )
-
-    def websocket_disconnect(self, event):
-        pass
-
-
 class MyConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         await self.channel_layer.group_add("visiblity-group", self.channel_name)
@@ -36,12 +12,11 @@ class MyConsumer(AsyncJsonWebsocketConsumer):
         status = event.get("status")
         json_data = {
             "message": event,
-            "user_id": self.scope["user"].id,
+            "id": self.scope["user"].id,
             "full_name": self.scope["user"].get_full_name(),
             "profile_photo": self.scope["user"].profile_photo.url,
             "status": status,
         }
-        # Send message to group
         await self.channel_layer.group_send(
             "visiblity-group",
             {
@@ -51,15 +26,10 @@ class MyConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def chat_message(self, event):
-        status = json.loads(event.get("text")).get("status")
-        await self.send_json(
-            {
-                "user_id": self.scope["user"].id,
-                "full_name": self.scope["user"].get_full_name(),
-                "profile_photo": self.scope["user"].profile_photo.url,
-                "status": status,
-            }
-        ),
+        from .serializers import GetUserDataSerializer
+
+        serializer = GetUserDataSerializer(instance=self.scope["user"])
+        await self.send_json(serializer.data),
 
     async def disconnect(self, event):
         await self.channel_layer.group_discard("visiblity-group", self.channel_name)
