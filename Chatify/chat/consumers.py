@@ -1,9 +1,8 @@
-from channels.consumer import SyncConsumer, AsyncConsumer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 import json
 
 
-class MyConsumer(AsyncJsonWebsocketConsumer):
+class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         await self.channel_layer.group_add("visiblity-group", self.channel_name)
         await self.accept()
@@ -26,9 +25,9 @@ class MyConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def chat_message(self, event):
-        from .serializers import GetUserDataSerializer
+        from .serializers import UserSerializer
 
-        serializer = GetUserDataSerializer(instance=self.scope["user"])
+        serializer = UserSerializer(instance=self.scope["user"])
         await self.send_json(serializer.data),
 
     async def disconnect(self, event):

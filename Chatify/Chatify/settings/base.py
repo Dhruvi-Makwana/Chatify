@@ -202,7 +202,6 @@ INSTALLED_APPS = [
     "channels",
 ]
 
-# WSGI_APPLICATION = "Chatify.wsgi.application"
 ASGI_APPLICATION = "Chatify.asgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [

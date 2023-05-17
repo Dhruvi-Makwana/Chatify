@@ -6,6 +6,17 @@ class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(
         max_length=255, write_only=True, required=False
     )
+    full_name = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+    def get_profile_photo(self, obj):
+        return obj.profile_photo.url
+
+    def get_status(self, obj):
+        return "offline" if obj.is_online else "online"
 
     class Meta:
         model = User
@@ -19,6 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "confirm_password",
             "is_online",
+            "full_name",
+            "status",
         )
 
     def create(self, validated_data):
@@ -42,27 +55,3 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
 
-
-class GetUserDataSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-
-    def get_full_name(self, obj):
-        return f"{obj.first_name} {obj.last_name}"
-
-    def get_profile_photo(self, obj):
-        return obj.profile_photo.url
-
-    def get_status(self, obj):
-        return "offline" if obj.is_online else "online"
-
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "username",
-            "profile_photo",
-            "is_online",
-            "full_name",
-            "status",
-        )
