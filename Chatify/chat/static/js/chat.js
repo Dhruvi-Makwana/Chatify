@@ -13,8 +13,9 @@ app.controller('chatCtrl', function($scope, $http) {
     }
 
     $scope.removeOfflineUser = function(chat) {
-        $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
-        $scope.$apply()
+        $scope.$apply(function() {
+              $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
+            });
     }
     $scope.addOnlineUserToList = function(userDetail) {
         if (!$scope.chatData.some(chat => chat.id == userDetail.id)) {
@@ -26,12 +27,7 @@ app.controller('chatCtrl', function($scope, $http) {
     ws.onmessage = function(e, ) {
         console.log("websocket onmessage open")
         let userDetail = JSON.parse(e.data)
-        if (userDetail.status == "offline") {
-            $scope.removeOfflineUser(userDetail)
-        }
-        else{
-            $scope.addOnlineUserToList(userDetail);
-        }
+        userDetail.status == "offline" ? $scope.removeOfflineUser(userDetail) : $scope.addOnlineUserToList(userDetail);
     }
 
     function setUserStatus(status) {
