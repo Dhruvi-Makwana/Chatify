@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer, LoginSerializer, GetUserDataSerializer
+from .serializers import UserSerializer, LoginSerializer
 from .models import User
 from .utils import validate_contact_number
 from django.shortcuts import redirect, reverse
@@ -9,9 +9,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from rest_framework.serializers import ValidationError
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-import json
+from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
 
 
 class RegistrationApi(APIView):
@@ -55,7 +53,7 @@ class LoginAPIView(APIView):
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
             return Response(
-                {"error": "enter a valid username or password"},
+                {"error": LOGIN_VALIDATION_ERROR_MESSAGE},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
@@ -72,10 +70,8 @@ class VisibilityStatusAPI(APIView):
 
 class OnlineUserAPI(APIView):
     def get(self, request):
-        data = User.objects.filter(is_online=True).order_by("-id")
-        return JsonResponse(
-            {"UserData": list(GetUserDataSerializer(data, many=True).data)}
-        )
+        data = User.objects.filter(is_active=True).order_by("-id")
+        return JsonResponse({"UserData": list(UserSerializer(data, many=True).data)})
 
 
 class LogoutView(APIView):

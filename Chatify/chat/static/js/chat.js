@@ -13,29 +13,23 @@ app.controller('chatCtrl', function($scope, $http) {
     }
 
     $scope.removeOfflineUser = function(chat) {
-         $scope.chatData = $scope.chatData.filter(data => data.id !== chat.id);
+        $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
         $scope.$apply()
     }
     $scope.addOnlineUserToList = function(userDetail) {
-          if (!$scope.chatData.some(chat => chat.id === userDetail.id)) {
+        if (!$scope.chatData.some(chat => chat.id == userDetail.id)) {
             $scope.$apply(function() {
-              $scope.chatData.push(userDetail);
+                $scope.chatData.push(userDetail);
             });
           }
     };
     ws.onmessage = function(e, ) {
         console.log("websocket onmessage open")
         let userDetail = JSON.parse(e.data)
-        console.log(userDetail)
-
-        console.log(userDetail.id)
         if (userDetail.status == "offline") {
-            for (chat of $scope.chatData) {
-                if (chat["id"] === userDetail.id) {
-                    $scope.removeOfflineUser(chat)
-                }
-            }
-        } else if (userDetail.status == "online") {
+            $scope.removeOfflineUser(userDetail)
+        }
+        else{
             $scope.addOnlineUserToList(userDetail);
         }
     }

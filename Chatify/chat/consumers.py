@@ -1,5 +1,5 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-import json
+from asgiref.sync import sync_to_async
 
 
 class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
@@ -8,26 +8,25 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
 
     async def receive_json(self, event):
-        status = event.get("status")
-        json_data = {
-            "message": event,
-            "id": self.scope["user"].id,
-            "full_name": self.scope["user"].get_full_name(),
-            "profile_photo": self.scope["user"].profile_photo.url,
-            "status": status,
-        }
         await self.channel_layer.group_send(
             "visiblity-group",
             {
                 "type": "chat.message",
-                "text": json.dumps(json_data),
             },
         )
+
+    @sync_to_async
+    def updated_instance(self):
+        from .models import User
+
+        instance = User.objects.get(id=self.scope["user"].id)
+        return instance
 
     async def chat_message(self, event):
         from .serializers import UserSerializer
 
-        serializer = UserSerializer(instance=self.scope["user"])
+        modify_instance = await self.updated_instance()
+        serializer = UserSerializer(instance=modify_instance)
         await self.send_json(serializer.data),
 
     async def disconnect(self, event):

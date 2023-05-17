@@ -1,5 +1,6 @@
 from .models import User
 from .utils import *
+from .constants import PASSWORD_ERROR_MESSAGE
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,11 +17,12 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.profile_photo.url
 
     def get_status(self, obj):
-        return "offline" if obj.is_online else "online"
+        return "online" if obj.is_online else "offline"
 
     class Meta:
         model = User
         fields = (
+            "id",
             "first_name",
             "last_name",
             "email",
@@ -32,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_online",
             "full_name",
             "status",
+            "full_name",
         )
 
     def create(self, validated_data):
@@ -47,11 +50,10 @@ class UserSerializer(serializers.ModelSerializer):
         confirmation_password = self.initial_data.get("confirm_password")
         if password and confirmation_password:
             if password != confirmation_password:
-                raise serializers.ValidationError("Password doesn't match")
+                raise serializers.ValidationError(PASSWORD_ERROR_MESSAGE)
         return password
 
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
-
