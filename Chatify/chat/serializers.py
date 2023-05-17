@@ -1,15 +1,29 @@
 from .models import User
+from rest_framework import serializers
 from .utils import *
+from .constants import PASSWORD_ERROR_MESSAGE
 
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(
         max_length=255, write_only=True, required=False
     )
+    full_name = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+    def get_profile_photo(self, obj):
+        return obj.profile_photo.url
+
+    def get_status(self, obj):
+        return "online" if obj.is_online else "offline"
 
     class Meta:
         model = User
         fields = (
+            "id",
             "first_name",
             "last_name",
             "email",
@@ -19,6 +33,9 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "confirm_password",
             "is_online",
+            "full_name",
+            "status",
+            "full_name",
         )
 
     def create(self, validated_data):
@@ -34,36 +51,10 @@ class UserSerializer(serializers.ModelSerializer):
         confirmation_password = self.initial_data.get("confirm_password")
         if password and confirmation_password:
             if password != confirmation_password:
-                raise serializers.ValidationError("Password doesn't match")
+                raise serializers.ValidationError(PASSWORD_ERROR_MESSAGE)
         return password
 
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
-
-
-class MessageSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    user = serializers.CharField()
-    profile = serializers.URLField()
-    message = serializers.CharField()
-
-
-class GetUserDataSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-    messages = MessageSerializer(read_only=True)
-
-    def get_full_name(self, obj):
-        return f"{obj.first_name} {obj.last_name}"
-
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "username",
-            "profile_photo",
-            "is_online",
-            "full_name",
-            "messages",
-        )

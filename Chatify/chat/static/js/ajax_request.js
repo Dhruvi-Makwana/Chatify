@@ -1,4 +1,5 @@
-function makeAjaxRequest(methodType, csrfToken, url, data, callback) {
+function makeAjaxRequest(methodType, csrfToken, url, data, callback)
+{
     $.ajax({
         method: methodType,
         headers: {
@@ -13,7 +14,7 @@ function makeAjaxRequest(methodType, csrfToken, url, data, callback) {
             }
         },
         error: function (data) {
-            if (callback) {
+             if (callback) {
                 callback(data)
             }
         },

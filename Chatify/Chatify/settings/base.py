@@ -17,7 +17,6 @@ CONFIG_ROOT = dirname(dirname(abspath(__file__)))
 # Absolute filesystem path to the project directory:
 PROJECT_ROOT = dirname(CONFIG_ROOT)
 
-
 env = environ.Env()
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
@@ -61,7 +60,7 @@ DATABASES = {
         "NAME": "chatify_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "locaenviron.Env.read_env()lhost",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
@@ -144,7 +143,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
 )
-
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Make this unique, and don"t share it with anybody.
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
 
@@ -184,9 +183,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = "Chatify.urls"
 
 # Python dotted path to the WSGI application used by Django"s runserver.
+WSGI_APPLICATION = "Chatify.wsgi.application"
 
 INSTALLED_APPS = [
-    "channels",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -199,11 +198,12 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "compressor",
     "phonenumber_field",
+    "daphne",
     "chat",
+    "channels",
 ]
 
-# WSGI_APPLICATION = "Chatify.wsgi.application"
-# ASGI_APPLICATION = "Chatify.asgi.application"
+ASGI_APPLICATION = "Chatify.asgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -240,22 +240,9 @@ CACHE_ENGINES = {
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
 AUTH_USER_MODEL = "chat.User"
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 10,
-}
-
 SENTRY_DSN = env.str("SENTRY_DSN", "")
 
 LOGOUT_REDIRECT_URL = "/"
-
-ASGI_APPLICATION = "Chatify.asgi.application"
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -264,5 +251,3 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

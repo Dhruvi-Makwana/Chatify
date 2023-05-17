@@ -1,26 +1,33 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-import json
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from asgiref.sync import sync_to_async
 
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
-        self.room_group_name = "python"
-
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-
+        await self.channel_layer.group_add("visiblity-group", self.channel_name)
         await self.accept()
 
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
-
+    async def receive_json(self, event):
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": message}
+            "visiblity-group",
+            {
+                "type": "chat.message",
+            },
         )
 
-    async def chat_message(self, event):
-        message = event["message"]
-        await self.send(text_data=json.dumps({"message": message}))
+    @sync_to_async
+    def updated_instance(self):
+        from .models import User
 
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        instance = User.objects.get(id=self.scope["user"].id)
+        return instance
+
+    async def chat_message(self, event):
+        from .serializers import UserSerializer
+
+        modify_instance = await self.updated_instance()
+        serializer = UserSerializer(instance=modify_instance)
+        await self.send_json(serializer.data),
+
+    async def disconnect(self, event):
+        await self.channel_layer.group_discard("visiblity-group", self.channel_name)
