@@ -4,7 +4,7 @@ Django settings for Chatify project.
 
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
-
+import os
 import environ
 
 ########## PATH CONFIGURATION
@@ -62,7 +62,6 @@ DATABASES = {
         "PASSWORD": "postgres",
         "HOST": "localhost",
         "PORT": "5432",
-        
     }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -144,7 +143,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
 )
-
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Make this unique, and don"t share it with anybody.
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="")
 
@@ -184,7 +183,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = "Chatify.urls"
 
 # Python dotted path to the WSGI application used by Django"s runserver.
-WSGI_APPLICATION = "Chatify.wsgi.application"
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -199,9 +197,12 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "compressor",
     "phonenumber_field",
+    "daphne",
     "chat",
+    "channels",
 ]
 
+ASGI_APPLICATION = "Chatify.asgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -237,15 +238,15 @@ CACHE_ENGINES = {
 
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
-AUTH_USER_MODEL = 'chat.User'
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 10,
-}
-
+AUTH_USER_MODEL = "chat.User"
 SENTRY_DSN = env.str("SENTRY_DSN", "")
+
+LOGOUT_REDIRECT_URL = "/"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}

@@ -5,8 +5,40 @@ app.config(function($interpolateProvider) {
     $interpolateProvider.endSymbol(']}');
 });
 
-
 app.controller('chatCtrl', function($scope, $http) {
+    var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
+
+    ws.onopen = function() {
+        console.log("websocket connection open")
+    }
+
+    $scope.removeOfflineUser = function(chat) {
+        $scope.$apply(function() {
+              $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
+            });
+    }
+    $scope.addOnlineUserToList = function(userDetail) {
+        if (!$scope.chatData.some(chat => chat.id == userDetail.id)) {
+            $scope.$apply(function() {
+                $scope.chatData.push(userDetail);
+            });
+          }
+    };
+    ws.onmessage = function(e, ) {
+        console.log("websocket onmessage open")
+        let userDetail = JSON.parse(e.data)
+        userDetail.status == "offline" ? $scope.removeOfflineUser(userDetail) : $scope.addOnlineUserToList(userDetail);
+    }
+
+    function setUserStatus(status) {
+        ws.send(JSON.stringify({
+            'status': status
+        }))
+    }
+
+    ws.onclose = function(event) {
+        console.log("close event")
+    }
 
     $scope.currentUser = undefined;
     $scope.status = 'online';
@@ -14,46 +46,19 @@ app.controller('chatCtrl', function($scope, $http) {
         text: ""
     }
 
-    $scope.chatData = [{
-            id: 1,
-            name: "Karan",
-            profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
-            messages: {
-                sender: [{
-                    user: "jaydip",
-                    profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
-                    message: "hiiii karan this is jaydip [const data]",
-                    id: 2
-                }],
-                receiver: [{
-                    user: "karan",
-                    profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
-                    message: "hiiii karan this is receiver karan",
-                    id: 1
-                }]
-            }
-        },
-        {
-            id: 2,
-            name: "jaydip",
-            profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
-            messages: {
-                sender: [{
-                    user: "jaydip",
-                    profile: "http://127.0.0.1:8000/static/images/nature.jpeg",
-                    message: "hiiii karan this is jaydip",
-                    id: 2
-                }],
-                receiver: [{
-                    user: "karan",
-                    profile: "http://127.0.0.1:8000/static/images/social_media.jpg",
-                    message: "hiii karan this is receiver karan",
-                    id: 1
-                }]
-            }
-        }
 
-    ]
+    $scope.ajaxGet = function(url, callback = null) {
+        $http.get(url).then(function(response) {
+            if (callback) {
+                callback(response)
+            }
+        });
+    }
+    $scope.chatData = []
+
+    $scope.ajaxGet('api/get_online_user/', function(response) {
+        $scope.chatData = response.data.UserData;
+    })
 
     $scope.showChat = function(user) {
         $scope.currentUser = user
@@ -73,8 +78,14 @@ app.controller('chatCtrl', function($scope, $http) {
             });
         }
     }
-    $scope.setStatus = function(status) {
+
+
+    $scope.setStatus = function(status, csrf_token) {
         $scope.status = status;
+        var formData = new FormData();
+        formData.append('status', $scope.status)
+        makeAjaxRequest('POST', csrf_token, "/api/visibility-status/", formData, function(response) {
+            setUserStatus($scope.status)
+        })
     }
 });
-

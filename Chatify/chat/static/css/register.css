@@ -39,7 +39,7 @@ html,body{
 .wrapper form .field{
   height: 50px;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 40px;
   position: relative;
 }
 .wrapper form .field input{
@@ -129,3 +129,11 @@ form .pass-link a:hover,
 form .signup-link a:hover{
   text-decoration: underline;
 }
+
+.errMsg
+{
+  color:red;
+  padding-left: 20px;
+  margin: 5px;
+}
+
