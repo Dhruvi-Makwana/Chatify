@@ -186,6 +186,7 @@ ROOT_URLCONF = "Chatify.urls"
 WSGI_APPLICATION = "Chatify.wsgi.application"
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -198,7 +199,6 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "compressor",
     "phonenumber_field",
-    "daphne",
     "chat",
     "channels",
 ]

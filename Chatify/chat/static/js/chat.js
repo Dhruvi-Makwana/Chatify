@@ -1,30 +1,30 @@
 var app = angular.module('ChatApp', []);
 
-app.config(function($interpolateProvider) {
+app.config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('{[');
     $interpolateProvider.endSymbol(']}');
 });
 
-app.controller('chatCtrl', function($scope, $http) {
+app.controller('chatCtrl', function ($scope, $http) {
     var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
 
-    ws.onopen = function() {
+    ws.onopen = function () {
         console.log("websocket connection open")
     }
 
-    $scope.removeOfflineUser = function(chat) {
-        $scope.$apply(function() {
-              $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
-            });
+    $scope.removeOfflineUser = function (chat) {
+        $scope.$apply(function () {
+            $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
+        });
     }
-    $scope.addOnlineUserToList = function(userDetail) {
+    $scope.addOnlineUserToList = function (userDetail) {
         if (!$scope.chatData.some(chat => chat.id == userDetail.id)) {
-            $scope.$apply(function() {
+            $scope.$apply(function () {
                 $scope.chatData.push(userDetail);
             });
-          }
+        }
     };
-    ws.onmessage = function(e, ) {
+    ws.onmessage = function (e,) {
         console.log("websocket onmessage open")
         let userDetail = JSON.parse(e.data)
         userDetail.status == "offline" ? $scope.removeOfflineUser(userDetail) : $scope.addOnlineUserToList(userDetail);
@@ -36,7 +36,7 @@ app.controller('chatCtrl', function($scope, $http) {
         }))
     }
 
-    ws.onclose = function(event) {
+    ws.onclose = function (event) {
         console.log("close event")
     }
 
@@ -47,8 +47,8 @@ app.controller('chatCtrl', function($scope, $http) {
     }
 
 
-    $scope.ajaxGet = function(url, callback = null) {
-        $http.get(url).then(function(response) {
+    $scope.ajaxGet = function (url, callback = null) {
+        $http.get(url).then(function (response) {
             if (callback) {
                 callback(response)
             }
@@ -56,18 +56,21 @@ app.controller('chatCtrl', function($scope, $http) {
     }
     $scope.chatData = []
 
-    $scope.ajaxGet('api/get_online_user/', function(response) {
+    $scope.ajaxGet('api/get_online_user/', function (response) {
         $scope.chatData = response.data.UserData;
     })
 
-    $scope.showChat = function(user) {
+    $scope.showChat = function (user) {
+
         $scope.currentUser = user
 
     };
 
-    $scope.sendChat = function(user) {
+    $scope.sendChat = function (user) {
+        console.log(user)
         var message = $scope.msgText.text;
-        var currentUser = $scope.chatData.find(function(u) {
+        console.log(message)
+        var currentUser = $scope.chatData.find(function (u) {
             return u.id === user;
         });
         if (currentUser) {
@@ -80,11 +83,11 @@ app.controller('chatCtrl', function($scope, $http) {
     }
 
 
-    $scope.setStatus = function(status, csrf_token) {
+    $scope.setStatus = function (status, csrf_token) {
         $scope.status = status;
         var formData = new FormData();
         formData.append('status', $scope.status)
-        makeAjaxRequest('POST', csrf_token, "/api/visibility-status/", formData, function(response) {
+        makeAjaxRequest('POST', csrf_token, "/api/visibility-status/", formData, function (response) {
             setUserStatus($scope.status)
         })
     }

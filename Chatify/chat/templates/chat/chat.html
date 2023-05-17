@@ -1,46 +1,50 @@
 {% extends 'chat/base.html' %}
 {% block title %} Chat {% endblock %}
-        {% load static %}
-             {% block content %}
+{% load static %}
+{% block content %}
 
 
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 <script src="{% static 'js/chat.js' %}"></script>
 
-    <div class="container-fluid h-100" ng-app="ChatApp" ng-controller="chatCtrl">
-         <div class="col d-flex flex-row-reverse">
-                <a type="button" href="{% url 'chat:logout' %}" class="float-end btn btncolor">Logout</a>
-            </div>
+<div class="container-fluid h-100" ng-app="ChatApp" ng-controller="chatCtrl">
+    <div class="col d-flex flex-row-reverse">
+        <a type="button" href="{% url 'chat:logout' %}" class="float-end btn btncolor">Logout</a>
+    </div>
 
 
-            <!-- porofile dropdown -->
-           <div class="dropdown d-flex flex-row-reverse mt-2">
-                <button type="button" class="btn btn-primary dropdown-toggle profile-dropdown" data-bs-toggle="dropdown">
-                    <img src="{{request.user.profile_photo.url}}" height="25px" width="25px" class="rounded-circle m-2 pe-2">
-                    <span>{{request.user.get_full_name}}</span>
-                </button>
-                <div class="dropdown-menu p-2">
-                    <div class="rounded m-1 p-2" ng-class="{'online-color': status == 'online'}"><input type="radio"  name="status" id="online" ng-click="setStatus('online','{{csrf_token}}')" checked="checked"><span class="p-2">Online</span></div>
-                    <div class="rounded m-1 p-2" ng-class="{'offline-color': status == 'offline'}"><input type="radio" name="status" id="offline" ng-click="setStatus('offline','{{csrf_token}}')"><span class="p-2">Offline</span></div>
-                </div>
-           </div>
+    <!-- porofile dropdown -->
+    <div class="dropdown d-flex flex-row-reverse mt-2">
+        <button type="button" class="btn btn-primary dropdown-toggle profile-dropdown" data-bs-toggle="dropdown">
+            <img src="{{request.user.profile_photo.url}}" height="25px" width="25px" class="rounded-circle m-2 pe-2">
+            <span>{{request.user.get_full_name}}</span>
+        </button>
+        <div class="dropdown-menu p-2">
+            <div class="rounded m-1 p-2" ng-class="{'online-color': status == 'online'}"><input type="radio"
+                    name="status" id="online" ng-click="setStatus('online','{{csrf_token}}')" checked="checked"><span
+                    class="p-2">Online</span></div>
+            <div class="rounded m-1 p-2" ng-class="{'offline-color': status == 'offline'}"><input type="radio"
+                    name="status" id="offline" ng-click="setStatus('offline','{{csrf_token}}')"><span
+                    class="p-2">Offline</span></div>
+        </div>
+    </div>
 
-        <div class="row justify-content-center h-100" >
-            <div class="col-md-4 col-xl-3 chat">
-                <div class="card mb-sm-3 mb-md-0 contacts_card">
-                    <div class="card-header">
-                        <div class="input-group">
-                            <input type="text" placeholder="Search..." name="" class="form-control search">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
-                            </div>
+    <div class="row justify-content-center h-100">
+        <div class="col-md-4 col-xl-3 chat">
+            <div class="card mb-sm-3 mb-md-0 contacts_card">
+                <div class="card-header">
+                    <div class="input-group">
+                        <input type="text" placeholder="Search..." name="" class="form-control search">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
                         </div>
                     </div>
-                    <div class="card-body contacts_body">
-                        <!-- userdata -->
-                        <ui class="contacts" ng-repeat="user in chatData">
-                            <li>
-                                <a href="#" class="userlist" ng-click="showChat(user)">
+                </div>
+                <div class="card-body contacts_body">
+                    <!-- userdata -->
+                    <ui class="contacts" ng-repeat="user in chatData">
+                        <li>
+                            <a href="#" class="userlist" ng-click="showChat(user)">
                                 <div class="d-flex bd-highlight">
                                     <div class="img_cont">
                                         <img ng-src={[user.profile_photo]} class="rounded-circle user_img">
@@ -51,80 +55,80 @@
 
                                     </div>
                                 </div>
-                                </a>
-                            </li>
-                        </ui>
-                    </div>
-                    <div class="card-footer"></div>
+                            </a>
+                        </li>
+                    </ui>
                 </div>
+                <div class="card-footer"></div>
             </div>
+        </div>
 
-            <!-- chat section -->
-            <div class="col-md-8 col-xl-6 chat" ng-if="currentUser">
-                <div class="card">
-                    <div class="card-header msg_head">
-                        <div class="d-flex bd-highlight">
-                            <div class="img_cont">
-                                <img ng-src={[currentUser.profile_photo]}
-                                    class="rounded-circle user_img">
-                                <span class="online_icon"></span>
-                            </div>
-                            <div class="user_info">
-                                <span ng-bind="currentUser.full_name"></span>
-                                <p>1767 Messages</p>
-                            </div>
+        <!-- chat section -->
+        <div class="col-md-8 col-xl-6 chat" ng-if="currentUser">
+            <div class="card">
+                <div class="card-header msg_head">
+                    <div class="d-flex bd-highlight">
+                        <div class="img_cont">
+                            <img ng-src={[currentUser.profile_photo]} class="rounded-circle user_img">
+                            <span class="online_icon"></span>
                         </div>
-
+                        <div class="user_info">
+                            <span ng-bind="currentUser.full_name"></span>
+                            <p>1767 Messages</p>
+                        </div>
                     </div>
 
-
-                    <!-- show message -->
-                    <div class="card-body msg_card_body">
-                        <div>
-                            <!-- receive message showing div -->
-                            <div class="d-flex justify-content-start mb-4" ng-repeat="message in currentUser.messages.receiver">
-                                <div class="img_cont_msg">
-                                    <img ng-src={[message.profile_photo]} class="rounded-circle user_img_msg">
-                                </div>
-                                <div class="msg_cotainer" >
-                                    <p ng-bind="message.message"></p>
-                                    <span class="msg_time">8:40 AM, Today</span>
-                                </div>
-                            </div>
-                        </div>
+                </div>
 
 
-
-                                    <!--sending message -->
-                        <div class="d-flex justify-content-end mb-4" ng-repeat="message in currentUser.messages.sender">
-                            <div class="msg_cotainer_send">
-                                <p ng-bind="message.message"></p>
-                                <span class="msg_time_send">8:55 AM, Today</span>
-                            </div>
+                <!-- show message -->
+                <div class="card-body msg_card_body">
+                    <div>
+                        <!-- receive message showing div -->
+                        <div class="d-flex justify-content-start mb-4"
+                            ng-repeat="message in currentUser.messages.receiver">
                             <div class="img_cont_msg">
-                                <img ng-src={[message.profile]} class="rounded-circle user_img_msg">
+                                <img ng-src={[message.profile_photo]} class="rounded-circle user_img_msg">
+                            </div>
+                            <div class="msg_cotainer">
+                                <p ng-bind="message.message"></p>
+                                <span class="msg_time">8:40 AM, Today</span>
                             </div>
                         </div>
                     </div>
 
 
-                    <div class="card-footer">
-                        <div class="input-group">
-                            <textarea ng-model="msgText.text" class="form-control type_msg"
-                                placeholder="Type your message..."></textarea>
-                            <div class="input-group-append">
-                                <span class="input-group-text send_btn" ng-click="sendChat(currentUser.id)"><i class="fas fa-location-arrow"></i></span>
-                            </div>
+
+                    <!--sending message -->
+                    <div class="d-flex justify-content-end mb-4" ng-repeat="message in currentUser.messages.sender">
+                        <div class="msg_cotainer_send">
+                            <p ng-bind="message.message"></p>
+                            <span class="msg_time_send">8:55 AM, Today</span>
+                        </div>
+                        <div class="img_cont_msg">
+                            <img ng-src={[message.profile]} class="rounded-circle user_img_msg">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card-footer">
+                    <div class="input-group">
+                        <textarea ng-model="msgText.text" class="form-control type_msg"
+                            placeholder="Type your message..."></textarea>
+                        <div class="input-group-append">
+                            <span class="input-group-text send_btn" ng-click="sendChat(currentUser.id)"><i
+                                    class="fas fa-location-arrow"></i></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 <script>
 
 
 
 </script>
 {% endblock %}
-
