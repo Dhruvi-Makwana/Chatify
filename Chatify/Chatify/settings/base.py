@@ -17,6 +17,7 @@ CONFIG_ROOT = dirname(dirname(abspath(__file__)))
 # Absolute filesystem path to the project directory:
 PROJECT_ROOT = dirname(CONFIG_ROOT)
 
+
 env = environ.Env()
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
@@ -60,7 +61,7 @@ DATABASES = {
         "NAME": "chatify_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "localhost",
+        "HOST": "locaenviron.Env.read_env()lhost",
         "PORT": "5432",
     }
 }
