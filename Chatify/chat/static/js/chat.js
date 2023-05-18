@@ -57,6 +57,7 @@ app.controller('chatCtrl', function ($scope, $http) {
     $scope.chatData = []
 
     $scope.ajaxGet('api/get_online_user/', function (response) {
+        console.log(response, "?????????")
         $scope.chatData = response.data.UserData;
     })
 
