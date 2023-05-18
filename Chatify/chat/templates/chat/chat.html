@@ -20,8 +20,8 @@
                     <span>{{request.user.get_full_name}}</span>
                 </button>
                 <div class="dropdown-menu p-2">
-                    <div class="rounded m-1 p-2" ng-class="{'online-color': status == 'online'}"><input type="radio"  name="status" id="online" ng-click="setStatus('online','{{csrf_token}}')" checked="checked"><span class="p-2">Online</span></div>
-                    <div class="rounded m-1 p-2" ng-class="{'offline-color': status == 'offline'}"><input type="radio" name="status" id="offline" ng-click="setStatus('offline','{{csrf_token}}')"><span class="p-2">Offline</span></div>
+                    <div class="rounded m-1 p-2" ng-class="{'online-color': status == 'online'}"><input type="radio"  name="status" id="online" ng-click="setStatus('online','{{csrf_token}}', {{request.user.id}} )" checked="checked"><span class="p-2">Online</span></div>
+                    <div class="rounded m-1 p-2" ng-class="{'offline-color': status == 'offline'}"><input type="radio" name="status" id="offline" ng-click="setStatus('offline','{{csrf_token}}', {{request.user.id}})"><span class="p-2">Offline</span></div>
                 </div>
            </div>
 

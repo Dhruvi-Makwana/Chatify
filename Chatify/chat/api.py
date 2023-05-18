@@ -10,6 +10,7 @@ from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
+from .websocket_utils import send_chat_message
 
 
 class RegistrationApi(APIView):
@@ -49,6 +50,7 @@ class LoginAPIView(APIView):
                 login(request, user)
                 user.is_online = True
                 user.save()
+                send_chat_message(user.id)
                 return Response(
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
@@ -70,7 +72,7 @@ class VisibilityStatusAPI(APIView):
 
 class OnlineUsersAPI(APIView):
     def get(self, request):
-        data = User.objects.filter(is_active=True).order_by("-id")
+        data = User.objects.filter(is_online=True, is_active=True).order_by("-id")
         return JsonResponse({"UserData": list(UserSerializer(data, many=True).data)})
 
 

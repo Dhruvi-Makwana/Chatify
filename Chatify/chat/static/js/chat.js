@@ -30,9 +30,10 @@ app.controller('chatCtrl', function($scope, $http) {
         userDetail.status == "offline" ? $scope.removeOfflineUser(userDetail) : $scope.addOnlineUserToList(userDetail);
     }
 
-    function setUserStatus(status) {
+    function setUserStatus(status, id) {
         ws.send(JSON.stringify({
-            'status': status
+            'status': status,
+            'Userid' : id,
         }))
     }
 
@@ -80,12 +81,13 @@ app.controller('chatCtrl', function($scope, $http) {
     }
 
 
-    $scope.setStatus = function(status, csrf_token) {
+    $scope.setStatus = function(status, csrf_token, currentUser_id) {
         $scope.status = status;
+        $scope.id = currentUser_id
         var formData = new FormData();
         formData.append('status', $scope.status)
         makeAjaxRequest('POST', csrf_token, "/api/visibility-status/", formData, function(response) {
-            setUserStatus($scope.status)
+            setUserStatus($scope.status, $scope.id)
         })
     }
 });
