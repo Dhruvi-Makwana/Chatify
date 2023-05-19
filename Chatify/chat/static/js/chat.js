@@ -61,19 +61,17 @@ app.controller('chatCtrl', function ($scope, $http) {
     })
 
     $scope.showChat = function (user) {
-
-        $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user}/`)
+        $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
         $scope.ps.onopen = function () {
             console.log("websocket connection open for chat")
         }
-
         $scope.currentUser = user
     };
 
     $scope.sendChat = function (user) {
         var message = $scope.msgText.text;
         $scope.ps.onmessage = function (event) {
-            console.log("successs response")
+            console.log(event, "Success response")
         }
 
         $scope.ps.send(JSON.stringify({
