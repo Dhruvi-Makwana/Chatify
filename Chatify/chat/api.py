@@ -78,5 +78,9 @@ class OnlineUsersAPI(APIView):
 
 class LogoutView(APIView):
     def get(self, request):
+        user = request.user
+        user.is_online = False
+        user.save()
+        send_chat_message(request.user.id)
         logout(request)
         return redirect(reverse("chat:loginUI"))
