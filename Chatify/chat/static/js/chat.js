@@ -27,9 +27,12 @@ app.controller('chatCtrl', function($scope, $http) {
     ws.onmessage = function(e, ) {
         console.log("websocket onmessage open")
         let userDetail = JSON.parse(e.data)
-        userDetail.data.status == "offline" ? $scope.removeOfflineUser(userDetail.data) : $scope.addOnlineUserToList(userDetail.data);
-        if(userDetail.user_auth == "logout"){
+        if (userDetail.user_auth == "logout") {
             loginRedirect()
+        } else if (userDetail.data.status == "offline") {
+            $scope.removeOfflineUser(userDetail.data);
+        } else if (userDetail.data.status == "online") {
+            $scope.addOnlineUserToList(userDetail.data);
         }
     }
 
