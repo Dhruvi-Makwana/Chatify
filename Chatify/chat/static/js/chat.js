@@ -29,7 +29,7 @@ app.controller('chatCtrl', function($scope, $http) {
         let userDetail = JSON.parse(e.data)
         userDetail.data.status == "offline" ? $scope.removeOfflineUser(userDetail.data) : $scope.addOnlineUserToList(userDetail.data);
         if(userDetail.user_auth == "logout"){
-            window.location.href= '/login_page/';
+            loginRedirect()
         }
     }
 

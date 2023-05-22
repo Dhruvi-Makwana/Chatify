@@ -17,7 +17,7 @@ function register(e) {
                 $("#email").html(mail_error);
         }
         else{
-                window.location.href  = '/login_page/';
+                loginRedirect()
         }
         })
 }
