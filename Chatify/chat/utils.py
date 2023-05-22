@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from utils.messages import INVALID_PHONE_NUMBER
 
+
 def validate_contact_number(mobile_number):
 
-    if len(mobile_number) > 10 and len(mobile_number) <= 13:
+    if 10 < len(mobile_number) <= 13:
         if mobile_number[:2] == "91":
             mobile_number = "+" + mobile_number
         elif mobile_number[:3] != "+91":
@@ -16,3 +17,9 @@ def validate_contact_number(mobile_number):
     else:
         raise serializers.ValidationError({"phone_number": INVALID_PHONE_NUMBER})
     return mobile_number
+
+
+def set_status(user):
+    user.is_online = False
+    user.save()
+    return user.id

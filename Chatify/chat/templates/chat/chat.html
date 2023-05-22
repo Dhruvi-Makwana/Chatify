@@ -8,13 +8,14 @@
 <script src="{% static 'js/chat.js' %}"></script>
 
     <div class="container-fluid h-100" ng-app="ChatApp" ng-controller="chatCtrl">
-         <div class="col d-flex flex-row-reverse">
-                <a type="button" href="{% url 'chat:logout' %}" class="float-end btn btncolor">Logout</a>
+        <div class="row">
+            <div class="col">
+                <a type="button" href="{% url 'chat:logout' %}" class="btn btncolor btn-outline-dark mt-3">Log me out from all devices</a>
             </div>
 
 
             <!-- porofile dropdown -->
-           <div class="dropdown d-flex flex-row-reverse mt-2">
+           <div class="col dropdown d-flex flex-row-reverse mt-3">
                 <button type="button" class="btn btn-primary dropdown-toggle profile-dropdown" data-bs-toggle="dropdown">
                     <img src="{{request.user.profile_photo.url}}" height="25px" width="25px" class="rounded-circle m-2 pe-2">
                     <span>{{request.user.get_full_name}}</span>
@@ -24,6 +25,7 @@
                     <div class="rounded m-1 p-2" ng-class="{'offline-color': status == 'offline'}"><input type="radio" name="status" id="offline" ng-click="setStatus('offline','{{csrf_token}}', {{request.user.id}})"><span class="p-2">Offline</span></div>
                 </div>
            </div>
+        </div>
 
         <div class="row justify-content-center h-100" >
             <div class="col-md-4 col-xl-3 chat">
