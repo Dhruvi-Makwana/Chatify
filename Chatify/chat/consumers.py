@@ -68,18 +68,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             },
         )
 
-    def update_receive_object(id):
-        from .models import User
-
-        instance = User.objects.get(id=id)
-
     async def chat_message(self, event):
         message = event["message"]
-        sender = event["sender"]
-        receiver = event["receiver"]
+        response = [
+            {
+                "user": self.scope["user"].username,
+                "profile": self.scope["user"].profile_photo.url,
+                "message": message,
+                "sendId": self.scope["user"].id,
+            }
+        ]
 
-        await self.send(
-            text_data=json.dumps(
-                {"message": message, "sender": sender, "receiver": receiver}
-            )
-        )
+        await self.send(text_data=json.dumps(response))

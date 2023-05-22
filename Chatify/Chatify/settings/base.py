@@ -238,6 +238,7 @@ CACHE_ENGINES = {
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
 AUTH_USER_MODEL = "chat.User"
+
 SENTRY_DSN = env.str("SENTRY_DSN", "")
 
 LOGOUT_REDIRECT_URL = "/"

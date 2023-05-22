@@ -17,6 +17,7 @@ app.controller('chatCtrl', function ($scope, $http) {
             $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
         });
     }
+
     $scope.addOnlineUserToList = function (userDetail) {
         if (!$scope.chatData.some(chat => chat.id == userDetail.id)) {
             $scope.$apply(function () {
@@ -24,6 +25,7 @@ app.controller('chatCtrl', function ($scope, $http) {
             });
         }
     };
+
     ws.onmessage = function (e,) {
         console.log("websocket onmessage open")
         let userDetail = JSON.parse(e.data)
@@ -45,7 +47,6 @@ app.controller('chatCtrl', function ($scope, $http) {
     $scope.msgText = {
         text: ""
     }
-
 
     $scope.ajaxGet = function (url, callback = null) {
         $http.get(url).then(function (response) {
@@ -71,27 +72,25 @@ app.controller('chatCtrl', function ($scope, $http) {
     $scope.sendChat = function (user) {
         var message = $scope.msgText.text;
         $scope.ps.onmessage = function (event) {
-            console.log(event, "Success response")
+            console.log(event)
         }
 
         $scope.ps.send(JSON.stringify({
             'msg': message, 'receiverId': user
         }))
 
+        var currentUser = $scope.chatData.find(function (u) {
+            return u.id == user;
+        });
 
 
-
-
-        // var currentUser = $scope.chatData.find(function (u) {
-        //     return u.id === user;
-        // });
-        // if (currentUser) {
-        //     currentUser.messages.sender.push({
-        //         user: currentUser.name,
-        //         profile: currentUser.profile,
-        //         message: message,
-        //     });
-        // }
+        if (currentUser) {
+            $scope.data.sender[0].push({
+                user: currentUser.name,
+                profile: currentUser.profile,
+                message: message,
+            });
+        }
     }
 
 
