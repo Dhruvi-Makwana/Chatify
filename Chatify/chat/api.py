@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer, LoginSerializer
 from .models import User
-from .utils import validate_contact_number
+from .utils import validate_contact_number, set_status
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
 from .websocket_utils import send_chat_message
+from django.contrib.sessions.models import Session
 
 
 class RegistrationApi(APIView):
@@ -50,7 +51,7 @@ class LoginAPIView(APIView):
                 login(request, user)
                 user.is_online = True
                 user.save()
-                send_chat_message(user.id)
+                send_chat_message(user.id, "login")
                 return Response(
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
@@ -78,5 +79,8 @@ class OnlineUsersAPI(APIView):
 
 class LogoutView(APIView):
     def get(self, request):
+        user_session_key = request.session.session_key
+        Session.objects.filter(session_key__startswith=user_session_key).delete()
+        send_chat_message(set_status(request.user), "logout")
         logout(request)
         return redirect(reverse("chat:loginUI"))
