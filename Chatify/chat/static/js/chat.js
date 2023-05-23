@@ -55,6 +55,7 @@ app.controller('chatCtrl', function ($scope, $http) {
             }
         });
     }
+
     $scope.chatData = []
 
     $scope.ajaxGet('api/get_online_user/', function (response) {
@@ -72,25 +73,49 @@ app.controller('chatCtrl', function ($scope, $http) {
     $scope.sendChat = function (user) {
         var message = $scope.msgText.text;
         $scope.ps.onmessage = function (event) {
-            console.log(event)
+            response = JSON.parse(event.data)
+
+            $scope.$apply(function () {
+                if (currentUser.id != response[0].sendId) {
+                    response.isSender = true
+
+                    currentUser.messages.push({
+                        "isSender": true,
+                        "message": response[0].message,
+                        "profile": response[0].profile,
+                    })
+
+                    console.log(currentUser)
+                }
+                else {
+                    response.isSender = false
+                    currentUser.messages.push({
+                        "isSender": false,
+                        "message": response[0].message,
+                        "profile": response[0].profile,
+                    })
+                    console.log(currentUser)
+
+                }
+            })
         }
 
+        $scope.userId = $('.userID').text();
         $scope.ps.send(JSON.stringify({
-            'msg': message, 'receiverId': user
+            'msg': message, 'receiverId': user, 'senderId': $scope.userId
         }))
 
         var currentUser = $scope.chatData.find(function (u) {
             return u.id == user;
         });
 
-
-        if (currentUser) {
-            $scope.data.sender[0].push({
-                user: currentUser.name,
-                profile: currentUser.profile,
-                message: message,
-            });
-        }
+        // if (currentUser) {
+        //     $scope.data.sender[0].push({
+        //         user: currentUser.name,
+        //         profile: currentUser.profile,
+        //         message: message,
+        //     });
+        // }
     }
 
 
