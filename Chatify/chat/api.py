@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer, LoginSerializer
+from .serializers import UserSerializer, LoginSerializer, UpdateUserActiveTime
 from .models import User
 from .utils import validate_contact_number, set_status
 from django.shortcuts import redirect, reverse
@@ -12,6 +12,7 @@ from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
 from .websocket_utils import send_chat_message
 from django.contrib.sessions.models import Session
+from .redis import check_last_login
 
 
 class RegistrationApi(APIView):
@@ -84,3 +85,10 @@ class LogoutView(APIView):
         send_chat_message(set_status(request.user), "logout")
         logout(request)
         return redirect(reverse("chat:loginUI"))
+
+
+class SetUserActiveTime(APIView):
+    def get(self, request):
+        user = User.objects.filter(username=request.user)
+        check_last_login(request.user.id)
+        return JsonResponse({"user": list(UpdateUserActiveTime(user, many=True).data)})
