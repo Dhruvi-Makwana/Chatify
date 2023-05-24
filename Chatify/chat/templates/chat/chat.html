@@ -86,36 +86,33 @@
                     <div ng-repeat="message in currentUser.messages">
                         <!-- receive message showing div -->
                         <div ng-if="!message.isSender" class="d-flex justify-content-start mb-4">
-                            <div>
-                                <div class="img_cont_msg">
-                                    <img ng-src="message.profile" class="rounded-circle user_img_msg">
-                                </div>
-                                <div class="msg_cotainer">
-                                    <p ng-bind="message.message"></p>
-                                    <span class="msg_time">8:40 AM, Today</span>
-                                </div>
+                            <div class="img_cont_msg">
+                                <img ng-src="{[message.profile]}" class="rounded-circle user_img_msg">
+                            </div>
+                            <div class="msg_cotainer">
+                                <span ng-bind="message.message"></span>
+                                <small class="msg_time">8:40 AM, Today</small>
                             </div>
                         </div>
-
 
                         <!--sending message -->
                         <div ng-if="message.isSender" class="d-flex justify-content-end mb-4">
-                            <div>
-                                <div class="msg_cotainer_send">
-                                    <p ng-bind="message.message"></p>
-                                    <span class="msg_time_send">8:55 AM, Today</span>
-                                </div>
-                                <div class="img_cont_msg">
-                                    <img ng-src="message.profile" class="rounded-circle user_img_msg">
-                                </div>
+                            <div class="msg_cotainer_send">
+                                <span ng-bind="message.message"></span>
+                                <span class="msg_time_send">8:55 AM, Today</span>
+                            </div>
+                            <div class="img_cont_msg">
+                                <img ng-src="{[message.profile]}" class="rounded-circle user_img_msg">
                             </div>
                         </div>
-
-
-
                     </div>
-                    <div class="card-footer">
+
+
+                    <div class="card-footer harsh">
                         <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                            </div>
                             <textarea ng-model="msgText.text" class="form-control type_msg"
                                 placeholder="Type your message..."></textarea>
                             <div class="input-group-append">
@@ -124,6 +121,8 @@
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>
