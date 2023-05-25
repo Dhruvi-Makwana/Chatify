@@ -12,7 +12,7 @@ from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
 from .websocket_utils import send_chat_message
 from django.contrib.sessions.models import Session
-from .redis_utils import check_last_login
+from .redis_utils import set_last_login
 
 
 class RegistrationApi(APIView):
@@ -91,14 +91,5 @@ class LogoutView(APIView):
 
 class SetUserActiveTime(APIView):
     def get(self, request):
-        check_last_login(request.user.id)
-        return JsonResponse(
-            {
-                "user": list(
-                    UserSerializer(
-                        User.objects.filter(id=request.user.id), many=True
-                    ).data
-                )
-            },
-            status=status.HTTP_200_OK,
-        )
+        set_last_login(request.user.id)
+        return Response(status=status.HTTP_200_OK)
