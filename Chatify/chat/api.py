@@ -71,7 +71,11 @@ class VisibilityStatusAPI(APIView):
 
 class OnlineUsersAPI(APIView):
     def get(self, request):
-        data = User.objects.filter(is_active=True).order_by("-id")
+        data = (
+            User.objects.filter(is_active=True)
+            .order_by("-id")
+            .exclude(id=request.user.id)
+        )
         return JsonResponse({"UserData": list(UserSerializer(data, many=True).data)})
 
 
