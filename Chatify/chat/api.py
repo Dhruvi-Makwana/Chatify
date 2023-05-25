@@ -12,7 +12,7 @@ from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
 from .websocket_utils import send_chat_message
 from django.contrib.sessions.models import Session
-from .redis import check_last_login
+from .redis_utils import check_last_login
 
 
 class RegistrationApi(APIView):
