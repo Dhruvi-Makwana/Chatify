@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer, LoginSerializer, UpdateUserActiveTime
+from .serializers import UserSerializer, LoginSerializer
 from .models import User
 from .utils import validate_contact_number, set_status
 from django.shortcuts import redirect, reverse
@@ -75,7 +75,9 @@ class VisibilityStatusAPI(APIView):
 class OnlineUsersAPI(APIView):
     def get(self, request):
         data = User.objects.filter(is_online=True, is_active=True).order_by("-id")
-        return JsonResponse({"UserData": list(UserSerializer(data, many=True).data)})
+        return JsonResponse(
+            {"UserData": list(UserSerializer(data, many=True).data)},
+        )
 
 
 class LogoutView(APIView):
@@ -89,6 +91,14 @@ class LogoutView(APIView):
 
 class SetUserActiveTime(APIView):
     def get(self, request):
-        user = User.objects.filter(username=request.user)
         check_last_login(request.user.id)
-        return JsonResponse({"user": list(UpdateUserActiveTime(user, many=True).data)})
+        return JsonResponse(
+            {
+                "user": list(
+                    UserSerializer(
+                        User.objects.filter(id=request.user.id), many=True
+                    ).data
+                )
+            },
+            status=status.HTTP_200_OK,
+        )

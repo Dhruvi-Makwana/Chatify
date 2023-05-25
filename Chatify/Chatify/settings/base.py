@@ -7,9 +7,6 @@ from sys import path
 import os
 import environ
 
-from celery.schedules import crontab
-from datetime import datetime
-
 ########## PATH CONFIGURATION
 BASE_DIR = dirname(dirname(__file__) + "../../../")
 

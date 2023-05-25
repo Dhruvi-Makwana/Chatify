@@ -32,6 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "confirm_password",
             "is_online",
+            "last_login",
             "full_name",
             "status",
             "full_name",
@@ -57,12 +58,3 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
-
-
-class UpdateUserActiveTime(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "last_login",
-        )

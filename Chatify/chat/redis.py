@@ -1,19 +1,13 @@
-from .models import User
 from .websocket_utils import send_chat_message
-from django.utils import timezone
 import redis
+from django.utils import timezone
+import pytz
 
 
 def check_last_login(user_id):
-
-    current_user = User.objects.get(id=user_id)
-    utc_now = timezone.now()
-    time_diff = utc_now - current_user.last_login
-    current_user.last_login = utc_now
-    current_user.save()
-    print(current_user.last_login)
-    if time_diff.total_seconds() > 20:
-        # call the function to send chat message
-        send_chat_message(user_id, "login")
-
-
+    r = redis.Redis()
+    last_login = r.get(f"user:{user_id}:last_login")
+    last_update_time = timezone.datetime.fromtimestamp(float(last_login), pytz.utc)
+    current_dt = timezone.now().astimezone(pytz.utc)
+    send_chat_message(user_id, "login")
+    r.set(f"user:{user_id}:last_login", timezone.now().timestamp())
