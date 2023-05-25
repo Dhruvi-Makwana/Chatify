@@ -32,6 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "confirm_password",
             "is_online",
+            "last_login",
             "full_name",
             "status",
             "full_name",

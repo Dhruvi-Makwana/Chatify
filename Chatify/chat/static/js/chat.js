@@ -96,4 +96,13 @@ app.controller('chatCtrl', function($scope, $http) {
             setUserStatus($scope.status, $scope.id)
         })
     }
+
+    $scope.myInterval = setInterval(setUserLastActiveTime, 20000);
+
+    function setUserLastActiveTime()
+    {
+         $scope.ajaxGet('api/set-user-active-time/', function(response) {
+             console.log("every 20 second api call")
+    })
+    }
 });
