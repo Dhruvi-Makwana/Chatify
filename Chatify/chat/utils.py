@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from utils.messages import INVALID_PHONE_NUMBER
+from django.contrib.auth import get_user_model
 
 
 def validate_contact_number(mobile_number):
@@ -19,7 +20,9 @@ def validate_contact_number(mobile_number):
     return mobile_number
 
 
-def set_status(user):
-    user.is_online = False
+def set_status(user_id, status):
+    User = get_user_model()
+    user = User.objects.get(id=user_id)
+    user.is_online = status == "online"
     user.save()
     return user.id

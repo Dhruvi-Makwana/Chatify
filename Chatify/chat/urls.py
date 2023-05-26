@@ -8,6 +8,7 @@ from .api import (
     OnlineUsersAPI,
     LogoutView,
     SetUserActiveTime,
+    CheckUserActivity,
 )
 
 app_name = "chat"
@@ -27,6 +28,11 @@ urlpatterns_api = [
         "chat/api/set-user-active-time/",
         SetUserActiveTime.as_view(),
         name="SetUserActiveTime",
+    ),
+    path(
+        "chat/api/get-user-from-redis/",
+        CheckUserActivity.as_view(),
+        name="CheckUserActive",
     ),
 ]
 
