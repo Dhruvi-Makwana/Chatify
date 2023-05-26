@@ -80,11 +80,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         serializer_data = UserSerializer(instance=update_instance).data
         serializer_data["chat_message"] = event["message"]
         await self.send(json.dumps(serializer_data))
-        # userid = event.get("id")
-        # logout = event.get("logout")
-        # modify_instance = await self.updated_instance(userid)
-        # serializer = UserSerializer(instance=modify_instance)
-        # await self.send_json({"data": serializer.data, "user_auth": logout})
 
     async def disconnect(self, event):
         await self.channel_layer.group_discard("visiblity-group", self.channel_name)
