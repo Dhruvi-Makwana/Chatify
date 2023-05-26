@@ -197,8 +197,8 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "compressor",
     "phonenumber_field",
-    "channels",
     "chat",
+    "channels",
 ]
 
 ASGI_APPLICATION = "Chatify.asgi.application"
@@ -238,7 +238,6 @@ CACHE_ENGINES = {
 CACHES = {"default": CACHE_ENGINES[env.str("CACHE", default="dummy")]}
 
 AUTH_USER_MODEL = "chat.User"
-
 SENTRY_DSN = env.str("SENTRY_DSN", "")
 
 LOGOUT_REDIRECT_URL = "/"

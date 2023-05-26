@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer, LoginSerializer, ChatMessageSerializer
 from .models import User, Chat
-from .utils import validate_contact_number
+from .utils import validate_contact_number, set_status
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
@@ -11,6 +11,9 @@ from django.http import JsonResponse
 from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
 from rest_framework import generics
+from .websocket_utils import send_chat_message
+from django.contrib.sessions.models import Session
+from .redis_utils import set_last_login
 
 
 class RegistrationApi(APIView):
@@ -50,6 +53,7 @@ class LoginAPIView(APIView):
                 login(request, user)
                 user.is_online = True
                 user.save()
+                send_chat_message(user.id, "login")
                 return Response(
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
@@ -66,6 +70,29 @@ class VisibilityStatusAPI(APIView):
         user = request.user
         user.is_online = request.data.get("status").lower().strip() == "online"
         user.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+class OnlineUsersAPI(APIView):
+    def get(self, request):
+        data = User.objects.filter(is_online=True, is_active=True).order_by("-id")
+        return JsonResponse(
+            {"UserData": list(UserSerializer(data, many=True).data)},
+        )
+
+
+class LogoutView(APIView):
+    def get(self, request):
+        user_session_key = request.session.session_key
+        Session.objects.filter(session_key__startswith=user_session_key).delete()
+        send_chat_message(set_status(request.user), "logout")
+        logout(request)
+        return redirect(reverse("chat:loginUI"))
+
+
+class SetUserActiveTime(APIView):
+    def get(self, request):
+        set_last_login(request.user.id)
         return Response(status=status.HTTP_200_OK)
 
 

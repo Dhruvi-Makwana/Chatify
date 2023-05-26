@@ -17,7 +17,6 @@ app.controller('chatCtrl', function ($scope, $http) {
             $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
         });
     }
-
     $scope.addOnlineUserToList = function (userDetail) {
         if (!$scope.chatData.some(chat => chat.id == userDetail.id)) {
             $scope.$apply(function () {
@@ -25,16 +24,22 @@ app.controller('chatCtrl', function ($scope, $http) {
             });
         }
     };
-
     ws.onmessage = function (e,) {
         console.log("websocket onmessage open")
         let userDetail = JSON.parse(e.data)
-        userDetail.status == "offline" ? $scope.removeOfflineUser(userDetail) : $scope.addOnlineUserToList(userDetail);
+        if (userDetail.user_auth == "logout") {
+            loginRedirect()
+        } else if (userDetail.data.status == "offline") {
+            $scope.removeOfflineUser(userDetail.data);
+        } else if (userDetail.data.status == "online") {
+            $scope.addOnlineUserToList(userDetail.data);
+        }
     }
 
-    function setUserStatus(status) {
+    function setUserStatus(status, id) {
         ws.send(JSON.stringify({
-            'status': status
+            'status': status,
+            'Userid': id,
         }))
     }
 
@@ -48,6 +53,7 @@ app.controller('chatCtrl', function ($scope, $http) {
         text: ""
     }
 
+
     $scope.ajaxGet = function (url, callback = null) {
         $http.get(url).then(function (response) {
             if (callback) {
@@ -55,7 +61,6 @@ app.controller('chatCtrl', function ($scope, $http) {
             }
         });
     }
-
     $scope.chatData = []
 
     $scope.ajaxGet('api/get_online_user/', function (response) {
@@ -108,23 +113,24 @@ app.controller('chatCtrl', function ($scope, $http) {
         var currentUser = $scope.chatData.find(function (u) {
             return u.id == user;
         });
-
-        // if (currentUser) {
-        //     $scope.data.sender[0].push({
-        //         user: currentUser.name,
-        //         profile: currentUser.profile,
-        //         message: message,
-        //     });
-        // }
     }
 
 
-    $scope.setStatus = function (status, csrf_token) {
+    $scope.setStatus = function (status, csrf_token, currentUser_id) {
         $scope.status = status;
+        $scope.id = currentUser_id
         var formData = new FormData();
         formData.append('status', $scope.status)
         makeAjaxRequest('POST', csrf_token, "/api/visibility-status/", formData, function (response) {
-            setUserStatus($scope.status)
+            setUserStatus($scope.status, $scope.id)
+        })
+    }
+
+    $scope.myInterval = setInterval(setUserLastActiveTime, 20000);
+
+    function setUserLastActiveTime() {
+        $scope.ajaxGet('api/set-user-active-time/', function (response) {
+            console.log("every 20 second api call")
         })
     }
 });

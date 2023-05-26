@@ -18,3 +18,9 @@ def validate_contact_number(mobile_number):
     else:
         raise serializers.ValidationError({"phone_number": INVALID_PHONE_NUMBER})
     return mobile_number
+
+
+def set_status(user):
+    user.is_online = False
+    user.save()
+    return user.id
