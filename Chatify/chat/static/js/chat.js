@@ -119,7 +119,13 @@ app.controller('chatCtrl', function ($scope, $http) {
 
     function getUserActiveTime() {
         $scope.ajaxGet('api/get-user-from-redis/', function (response) {
-            console.log("every 1 minute")
+        })
+    }
+
+    $scope.interval1 = setInterval(getUserActiveTime, 60000);
+
+    function getUserActiveTime() {
+        $scope.ajaxGet('api/get-user-from-redis/', function (response) {
         })
     }
 });
