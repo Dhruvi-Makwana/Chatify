@@ -13,7 +13,9 @@ from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
 from rest_framework import generics
 from .websocket_utils import send_chat_message
 from django.contrib.sessions.models import Session
-from .redis_utils import set_last_login
+from .redis_utils import set_last_login, REDIS_CACHE
+from django.utils import timezone
+import datetime
 
 
 class RegistrationApi(APIView):
@@ -67,9 +69,10 @@ class LoginAPIView(APIView):
 
 class VisibilityStatusAPI(APIView):
     def post(self, request, *args, **kwargs):
-        user = request.user
-        user.is_online = request.data.get("status").lower().strip() == "online"
-        user.save()
+        user_id = request.data.get("id")
+        get_status = request.data.get("status")
+        set_status(user_id, get_status)
+        send_chat_message(user_id, "login")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -115,3 +118,18 @@ class LogoutView(APIView):
 class ChatMessageListCreateView(generics.ListCreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatMessageSerializer
+
+
+class CheckUserActivity(APIView):
+    def get(self, request):
+        current_time = timezone.now()
+        for key in REDIS_CACHE.keys("user:*:last_login"):
+            redis_time = REDIS_CACHE.get(key)
+            user_id = key.decode("utf-8").split(":")[1]
+            redis_time = redis_time.decode("utf-8")
+            last_active_time = datetime.datetime.fromisoformat(redis_time)
+            time_diff = (current_time - last_active_time).total_seconds()
+            if time_diff > 60:
+                set_status(user_id, "offline")
+                send_chat_message(user_id, "login")
+        return Response(status=status.HTTP_200_OK)
