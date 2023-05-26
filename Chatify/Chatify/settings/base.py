@@ -1,10 +1,9 @@
 """
 Django settings for Chatify project.
 """
-
+import os
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
-import os
 import environ
 
 ########## PATH CONFIGURATION
@@ -185,6 +184,7 @@ ROOT_URLCONF = "Chatify.urls"
 # Python dotted path to the WSGI application used by Django"s runserver.
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -197,7 +197,6 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "compressor",
     "phonenumber_field",
-    "daphne",
     "chat",
     "channels",
 ]

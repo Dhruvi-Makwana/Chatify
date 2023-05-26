@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from utils.messages import INVALID_PHONE_NUMBER
+from utils.messages import INVALID_PHONE_NUMBER, PHONE_NUMBER_VALUE
 from django.contrib.auth import get_user_model
 
 
 def validate_contact_number(mobile_number):
-
-    if 10 < len(mobile_number) <= 13:
+    if mobile_number(None):
+        raise serializers.ValidationError({"phone_number": PHONE_NUMBER_VALUE})
+    if len(mobile_number) > 10 and len(mobile_number) <= 13:
         if mobile_number[:2] == "91":
             mobile_number = "+" + mobile_number
         elif mobile_number[:3] != "+91":

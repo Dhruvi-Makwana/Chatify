@@ -1,4 +1,5 @@
-from .models import User
+from .models import User, Chat
+from rest_framework import serializers
 from .utils import *
 from .constants import PASSWORD_ERROR_MESSAGE
 
@@ -9,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     )
     full_name = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+    messages = serializers.SerializerMethodField()
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -18,6 +20,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_status(self, obj):
         return "online" if obj.is_online else "offline"
+
+    def get_messages(self, obj):
+        return []
 
     class Meta:
         model = User
@@ -33,9 +38,9 @@ class UserSerializer(serializers.ModelSerializer):
             "confirm_password",
             "is_online",
             "last_login",
-            "full_name",
             "status",
             "full_name",
+            "messages",
         )
 
     def create(self, validated_data):
@@ -58,3 +63,9 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = "__all__"

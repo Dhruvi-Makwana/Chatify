@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer, LoginSerializer
-from .models import User
+from .serializers import UserSerializer, LoginSerializer, ChatMessageSerializer
+from .models import User, Chat
 from .utils import validate_contact_number, set_status
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate
@@ -10,6 +10,7 @@ from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
+from rest_framework import generics
 from .websocket_utils import send_chat_message
 from django.contrib.sessions.models import Session
 from .redis_utils import set_last_login, REDIS_CACHE
@@ -96,6 +97,27 @@ class SetUserActiveTime(APIView):
     def get(self, request):
         set_last_login(request.user.id)
         return Response(status=status.HTTP_200_OK)
+
+
+class OnlineUsersAPI(APIView):
+    def get(self, request):
+        data = (
+            User.objects.filter(is_active=True)
+            .order_by("-id")
+            .exclude(id=request.user.id)
+        )
+        return JsonResponse({"UserData": list(UserSerializer(data, many=True).data)})
+
+
+class LogoutView(APIView):
+    def get(self, request):
+        logout(request)
+        return redirect(reverse("chat:loginUI"))
+
+
+class ChatMessageListCreateView(generics.ListCreateAPIView):
+    queryset = Chat.objects.all()
+    serializer_class = ChatMessageSerializer
 
 
 class CheckUserActivity(APIView):
