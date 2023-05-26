@@ -69,6 +69,7 @@ class LoginAPIView(APIView):
 
 class VisibilityStatusAPI(APIView):
     def post(self, request, *args, **kwargs):
+
         user_id = request.data.get("id")
         get_status = request.data.get("status")
         set_status(user_id, get_status)
@@ -78,7 +79,7 @@ class VisibilityStatusAPI(APIView):
 
 class OnlineUsersAPI(APIView):
     def get(self, request):
-        data = User.objects.filter(is_online=True, is_active=True).order_by("-id")
+        data = User.objects.filter(is_online=True, is_active=True).order_by("-id").exclude(id=request.user.id)
         return JsonResponse(
             {"UserData": list(UserSerializer(data, many=True).data)},
         )
@@ -88,7 +89,7 @@ class LogoutView(APIView):
     def get(self, request):
         user_session_key = request.session.session_key
         Session.objects.filter(session_key__startswith=user_session_key).delete()
-        send_chat_message(set_status(request.user), "logout")
+        send_chat_message(set_status(request.user, "online"), "logout")
         logout(request)
         return redirect(reverse("chat:loginUI"))
 

@@ -13,6 +13,7 @@
       <div class="field">
          <input type="text" name="username" required >
          <label>Username</label>
+         <small class="errMsg" id="username"></small>
       </div>
       <div class="field">
          <input type="email" name="email" required>
@@ -37,6 +38,7 @@
       </div>
       <div class="field">
          <input type="file" class="pt-2" name="profile_photo">
+         <small class="errMsg" id="profileerror"></small>
       </div>
       <div class="field">
          <input type="submit" value="Register" id="submit" onclick="register(event)">

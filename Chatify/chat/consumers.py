@@ -24,6 +24,7 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
 
     @sync_to_async
     def updated_instance(self, user_id):
+
         from .models import User
 
         instance = User.objects.get(id=user_id)
@@ -31,10 +32,11 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
 
     async def chat_message(self, event):
         from .serializers import UserSerializer
-
-        modify_instance = await self.updated_instance()
+        userid = event.get("id")
+        logout = event.get("logout")
+        modify_instance = await self.updated_instance(userid)
         serializer = UserSerializer(instance=modify_instance)
-        await self.send_json(serializer.data),
+        await self.send_json({"data": serializer.data, "user_auth": logout})
 
     async def disconnect(self, event):
         await self.channel_layer.group_discard("visiblity-group", self.channel_name)

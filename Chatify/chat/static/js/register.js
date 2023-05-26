@@ -9,12 +9,14 @@ function register(e) {
         var number = JSON.parse(response.responseText).errors.mobile_number;
         var pass_error = JSON.parse(response.responseText).errors.password;
         var mail_error = JSON.parse(response.responseText).errors.email;
+        var profile_error = JSON.parse(response.responseText).errors.profile_photo;
         if(error){
                 $("#username").html(username_err);
                 $("#phonenumber").html(number);
                 $("#password").html(pass_error);
                 $("#confirm_password").html(pass_error);
                 $("#email").html(mail_error);
+                $("#profileerror").html(profile_error);
         }
         else{
                 loginRedirect()
