@@ -64,23 +64,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {"type": "chat.message", "message": message, "sender_id": sender_id},
         )
 
+    @sync_to_async
+    def get_instance(self, sender_id):
+        from .models import User
+
+        instance = User.objects.get(id=sender_id)
+        return instance
+
     async def chat_message(self, event):
-        message = event["message"]
-        sender_id = event["sender_id"]
-        response = [
-            {
-                "user": self.scope["user"].username,
-                "profile": self.scope["user"].profile_photo.url,
-                "message": message,
-                "sendId": sender_id,
-            }
-        ]
-        await self.send(text_data=json.dumps(response))
-        userid = event.get("id")
-        logout = event.get("logout")
-        modify_instance = await self.updated_instance(userid)
-        serializer = UserSerializer(instance=modify_instance)
-        await self.send_json({"data": serializer.data, "user_auth": logout})
+        from .serializers import UserSerializer
+
+        update_instance = await self.get_instance(int(event["sender_id"]))
+        serializer_data = UserSerializer(instance=update_instance).data
+        serializer_data["chat_message"] = event["message"]
+        await self.send(json.dumps(serializer_data))
+        # userid = event.get("id")
+        # logout = event.get("logout")
+        # modify_instance = await self.updated_instance(userid)
+        # serializer = UserSerializer(instance=modify_instance)
+        # await self.send_json({"data": serializer.data, "user_auth": logout})
 
     async def disconnect(self, event):
         await self.channel_layer.group_discard("visiblity-group", self.channel_name)

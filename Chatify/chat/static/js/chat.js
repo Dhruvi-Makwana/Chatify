@@ -6,10 +6,11 @@ app.config(function ($interpolateProvider) {
 });
 
 app.controller('chatCtrl', function ($scope, $http) {
+    $scope.userId = $('.userID').text();
+
     var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
 
     ws.onopen = function () {
-        console.log("websocket connection open")
     }
 
     $scope.removeOfflineUser = function (chat) {
@@ -17,6 +18,7 @@ app.controller('chatCtrl', function ($scope, $http) {
             $scope.chatData = $scope.chatData.filter(data => data.id != chat.id);
         });
     }
+
     $scope.addOnlineUserToList = function (userDetail) {
         if (!$scope.chatData.some(chat => chat.id == userDetail.id)) {
             $scope.$apply(function () {
@@ -25,7 +27,6 @@ app.controller('chatCtrl', function ($scope, $http) {
         }
     };
     ws.onmessage = function (e,) {
-        console.log("websocket onmessage open")
         let userDetail = JSON.parse(e.data)
         if (userDetail.user_auth == "logout") {
             loginRedirect()
@@ -44,7 +45,6 @@ app.controller('chatCtrl', function ($scope, $http) {
     }
 
     ws.onclose = function (event) {
-        console.log("close event")
     }
 
     $scope.currentUser = undefined;
@@ -70,7 +70,6 @@ app.controller('chatCtrl', function ($scope, $http) {
     $scope.showChat = function (user) {
         $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
         $scope.ps.onopen = function () {
-            console.log("websocket connection open for chat")
         }
         $scope.currentUser = user
     };
@@ -79,33 +78,15 @@ app.controller('chatCtrl', function ($scope, $http) {
         var message = $scope.msgText.text;
         $scope.ps.onmessage = function (event) {
             response = JSON.parse(event.data)
-
             $scope.$apply(function () {
-                if (currentUser.id != response[0].sendId) {
-                    response.isSender = true
-
-                    currentUser.messages.push({
-                        "isSender": true,
-                        "message": response[0].message,
-                        "profile": response[0].profile,
-                    })
-
-                    console.log(currentUser)
-                }
-                else {
+                response.isSender = true
+                if (currentUser.id == response.id) {
                     response.isSender = false
-                    currentUser.messages.push({
-                        "isSender": false,
-                        "message": response[0].message,
-                        "profile": response[0].profile,
-                    })
-                    console.log(currentUser)
-
                 }
+                currentUser.messages.push(response)
             })
         }
 
-        $scope.userId = $('.userID').text();
         $scope.ps.send(JSON.stringify({
             'msg': message, 'receiverId': user, 'senderId': $scope.userId
         }))
@@ -130,7 +111,6 @@ app.controller('chatCtrl', function ($scope, $http) {
 
     function setUserLastActiveTime() {
         $scope.ajaxGet('api/set-user-active-time/', function (response) {
-            console.log("every 20 second api call")
         })
     }
 });

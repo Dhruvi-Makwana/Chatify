@@ -3,6 +3,7 @@
 {% load static %}
 {% block content %}
 
+<span style="display: none;" class="userID">{{request.user.id}}</span>
 
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 <script src="{% static 'js/chat.js' %}"></script>
@@ -87,10 +88,10 @@
 						<!-- receive message showing div -->
 						<div ng-if="!message.isSender" class="d-flex justify-content-start mb-4">
 							<div class="img_cont_msg">
-								<img ng-src="{[message.profile]}" class="rounded-circle user_img_msg">
+								<img ng-src="{[message.profile_photo]}" class="rounded-circle user_img_msg">
 							</div>
 							<div class="msg_cotainer">
-								<span ng-bind="message.message"></span>
+								<span ng-bind="message.chat_message"></span>
 								<small class="msg_time">8:40 AM, Today</small>
 							</div>
 						</div>
@@ -98,11 +99,11 @@
 						<!--sending message -->
 						<div ng-if="message.isSender" class="d-flex justify-content-end mb-4">
 							<div class="msg_cotainer_send">
-								<span ng-bind="message.message"></span>
+								<span ng-bind="message.chat_message"></span>
 								<span class="msg_time_send">8:55 AM, Today</span>
 							</div>
 							<div class="img_cont_msg">
-								<img ng-src="{[message.profile]}" class="rounded-circle user_img_msg">
+								<img ng-src="{[message.profile_photo]}" class="rounded-circle user_img_msg">
 							</div>
 						</div>
 					</div>
