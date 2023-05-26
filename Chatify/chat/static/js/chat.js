@@ -88,6 +88,7 @@ app.controller('chatCtrl', function($scope, $http) {
         formData.append('status', $scope.status)
         formData.append('id', $scope.id)
         makeAjaxRequest('POST', csrf_token, "/api/visibility-status/", formData, function(response) {
+            setUserStatus($scope.status, $scope.id)
         })
     }
 
