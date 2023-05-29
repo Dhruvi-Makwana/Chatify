@@ -92,7 +92,7 @@ class LogoutView(APIView):
     def get(self, request):
         user_session_key = request.session.session_key
         Session.objects.filter(session_key__startswith=user_session_key).delete()
-        send_chat_message(set_status(request.user.id, "online"), "logout")
+        send_chat_message(set_status(request.user.id, "offline"), "logout")
         logout(request)
         return redirect(reverse("chat:loginUI"))
 
