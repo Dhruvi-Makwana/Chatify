@@ -7,9 +7,7 @@ app.config(function ($interpolateProvider) {
 
 app.controller('chatCtrl', function ($scope, $http) {
     $scope.userId = $('.userID').text();
-
-    var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
-
+    var ws = new WebSocket(`ws://${url}/ws/chat/`)
     ws.onopen = function () {
     }
 
@@ -65,7 +63,7 @@ app.controller('chatCtrl', function ($scope, $http) {
     })
 
     $scope.showChat = function (user) {
-        $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
+        $scope.ps = new WebSocket(`ws://${url}/ws/chat/message/${user.id}/`)
         $scope.ps.onopen = function () {
         }
         $scope.currentUser = user
