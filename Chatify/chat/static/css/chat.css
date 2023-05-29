@@ -24,9 +24,6 @@ html {
     white-space: nowrap;
 }
 
-.msg_card_body {
-    overflow-y: auto;
-}
 
 .card-header {
     border-radius: 15px 15px 0 0 !important;
@@ -38,10 +35,7 @@ html {
     border-top: 0 !important;
 }
 
-.textsearch {
-    margin-top: 280px;
-    position: sticky;
-}
+
 
 .container {
     align-content: center;

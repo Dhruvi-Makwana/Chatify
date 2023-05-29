@@ -37,12 +37,7 @@ app.controller('chatCtrl', function ($scope, $http) {
         }
     }
 
-    function setUserStatus(status, id) {
-        ws.send(JSON.stringify({
-            'status': status,
-            'Userid': id,
-        }))
-    }
+
 
     ws.onclose = function (event) {
     }
@@ -76,6 +71,7 @@ app.controller('chatCtrl', function ($scope, $http) {
 
     $scope.sendChat = function (user) {
         var message = $scope.msgText.text;
+        $scope.msgText.text = " "
         $scope.ps.onmessage = function (event) {
             response = JSON.parse(event.data)
             $scope.$apply(function () {
@@ -104,7 +100,7 @@ app.controller('chatCtrl', function ($scope, $http) {
         formData.append('status', $scope.status)
         formData.append('id', $scope.id)
         makeAjaxRequest('POST', csrf_token, "/api/visibility-status/", formData, function (response) {
-            setUserStatus($scope.status, $scope.id)
+
         })
     }
 
@@ -115,17 +111,11 @@ app.controller('chatCtrl', function ($scope, $http) {
         })
     }
 
-    $scope.interval1 = setInterval(getUserActiveTime, 60000);
+    $scope.oneMinuteInterval = setInterval(getUserActiveTime, 60000);
 
     function getUserActiveTime() {
         $scope.ajaxGet('api/get-user-from-redis/', function (response) {
         })
     }
 
-    $scope.interval1 = setInterval(getUserActiveTime, 60000);
-
-    function getUserActiveTime() {
-        $scope.ajaxGet('api/get-user-from-redis/', function (response) {
-        })
-    }
 });
