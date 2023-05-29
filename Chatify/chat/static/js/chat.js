@@ -64,10 +64,18 @@ app.controller('chatCtrl', function ($scope, $http) {
         $scope.chatData = response.data.UserData;
     })
 
+
     $scope.showChat = function (user) {
-        $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
-        $scope.ps.onopen = function () {
+        console.log(user.is_websocket_registered)
+
+        if (!user.is_websocket_registered) {
+            $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
+            $scope.ps.onopen = function () {
+                console.log("websocket is open")
+            }
         }
+        user.is_websocket_registered = true
+
         $scope.currentUser = user
     };
 
