@@ -33,7 +33,9 @@ app.controller('chatCtrl', function ($scope, $http) {
         } else if (userDetail.data.status == "offline") {
             $scope.removeOfflineUser(userDetail.data);
         } else if (userDetail.data.status == "online") {
-            $scope.addOnlineUserToList(userDetail.data);
+            if (userDetail.data.id != $scope.userId) {
+                $scope.addOnlineUserToList(userDetail.data);
+            }
         }
     }
 

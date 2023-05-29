@@ -24,7 +24,6 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
 
     @sync_to_async
     def updated_instance(self, user_id):
-
         from .models import User
 
         instance = User.objects.get(id=user_id)
@@ -32,6 +31,7 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
 
     async def chat_message(self, event):
         from .serializers import UserSerializer
+
         userid = event.get("id")
         logout = event.get("logout")
         modify_instance = await self.updated_instance(userid)
