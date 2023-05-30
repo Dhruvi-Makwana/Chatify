@@ -5,9 +5,6 @@ from channels.generic.websocket import (
 from asgiref.sync import sync_to_async
 import json
 
-from .serializers import UserSerializer
-from .models import Chat
-
 
 class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
@@ -57,10 +54,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
+    @sync_to_async
+    def send_data_to_save_chat(self, sender, msg, receiver):
+        from .models import Group, Chat, User
+
+        sender_id = User.objects.get(id=int(sender))
+        receiver_id = User.objects.get(id=int(receiver))
+        try:
+            instance = Group.objects.get(name=self.group_name)
+        except Group.DoesNotExist:
+            instance = Group.objects.create(name=self.group_name)
+        instance.user.set(sender)
+        Chat.objects.create(
+            message=msg,
+            group=instance,
+            sender=sender_id,
+            receiver=receiver_id,
+            is_read=True,
+        )
+
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         sender_id = text_data_json["senderId"]
         message = text_data_json["msg"]
+        receiver_id = text_data_json["receiverId"]
+        await self.send_data_to_save_chat(sender_id, message, receiver_id)
         await self.channel_layer.group_send(
             self.group_name,
             {"type": "chat.message", "message": message, "sender_id": sender_id},
