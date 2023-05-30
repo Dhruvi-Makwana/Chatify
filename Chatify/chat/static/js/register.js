@@ -4,7 +4,6 @@ function register(e) {
         var formdata = new FormData($('#register_form')[0]);
         makeAjaxRequest('POST', csrfToken, "/api/register/", formdata, function (response) {
                 if (!response.responseText) {
-                        console.log("successfully")
                         loginRedirect()
                 }
                 else {
