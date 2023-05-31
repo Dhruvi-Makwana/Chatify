@@ -1,7 +1,13 @@
-from .models import User, Chat
+from .models import User, Chat, ChatGroup
 from rest_framework import serializers
 from .utils import *
 from .constants import PASSWORD_ERROR_MESSAGE
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = "__all__"
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,7 +28,9 @@ class UserSerializer(serializers.ModelSerializer):
         return "online" if obj.is_online else "offline"
 
     def get_messages(self, obj):
-        return []
+        messages = Chat.objects.all()
+        message_serializer = ChatSerializer(messages, many=True)
+        return message_serializer.data
 
     class Meta:
         model = User

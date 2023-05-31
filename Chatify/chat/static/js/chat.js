@@ -80,11 +80,12 @@ app.controller('chatCtrl', function ($scope, $http) {
                     response.isSender = false
                 }
                 currentUser.messages.push(response)
+
             })
         }
-
+        $scope.date = new Date().toLocaleString();
         $scope.ps.send(JSON.stringify({
-            'msg': message, 'receiverId': user, 'senderId': $scope.userId
+            'msg': message, 'receiverId': user, 'senderId': $scope.userId, 'date' : $scope.date
         }))
 
         var currentUser = $scope.chatData.find(function (u) {
