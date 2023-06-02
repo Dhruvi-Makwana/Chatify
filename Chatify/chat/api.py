@@ -16,6 +16,7 @@ from django.contrib.sessions.models import Session
 from .redis_utils import set_last_login, REDIS_CACHE
 from django.utils import timezone
 import datetime
+from rest_framework import generics
 
 
 class RegistrationApi(APIView):

@@ -57,15 +57,17 @@ app.controller('chatCtrl', function ($scope, $http) {
         });
     }
     $scope.chatData = []
-
     $scope.ajaxGet('api/get_online_user/', function (response) {
         $scope.chatData = response.data.UserData;
     })
 
     $scope.showChat = function (user) {
-        $scope.ps = new WebSocket(`${scheme}//${url}/ws/chat/message/${user.id}/`)
-        $scope.ps.onopen = function () {
+        if (!user.is_websocket_registered) {
+            $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
+            $scope.ps.onopen = function () {
+            }
         }
+        user.is_websocket_registered = true
         $scope.currentUser = user
     };
 
