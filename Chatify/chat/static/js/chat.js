@@ -7,9 +7,7 @@ app.config(function ($interpolateProvider) {
 
 app.controller('chatCtrl', function ($scope, $http) {
     $scope.userId = $('.userID').text();
-
-    var ws = new WebSocket('ws://127.0.0.1:8000/ws/chat/')
-
+    var ws = new WebSocket(`${scheme}//${url}/ws/chat/`)
     ws.onopen = function () {
     }
 
@@ -67,7 +65,6 @@ app.controller('chatCtrl', function ($scope, $http) {
         if (!user.is_websocket_registered) {
             $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
             $scope.ps.onopen = function () {
-                console.log("websocket is open")
             }
         }
         user.is_websocket_registered = true

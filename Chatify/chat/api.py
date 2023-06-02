@@ -104,16 +104,6 @@ class SetUserActiveTime(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class OnlineUsersAPI(APIView):
-    def get(self, request):
-        data = (
-            User.objects.filter(is_active=True)
-            .order_by("-id")
-            .exclude(id=request.user.id)
-        )
-        return JsonResponse({"UserData": list(UserSerializer(data, many=True).data)})
-
-
 class ChatMessageListCreateView(generics.ListCreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatMessageSerializer
