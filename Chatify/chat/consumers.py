@@ -58,19 +58,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def send_data_to_save_chat(self, sender, msg, get_date):
         from .models import ChatGroup, Chat, User
         from datetime import datetime
-        sender_id = User.objects.get(id=int(sender))
 
+        sender_id = User.objects.get(id=int(sender))
         try:
             instance = ChatGroup.objects.get(name=self.group_name)
         except ChatGroup.DoesNotExist:
             instance = ChatGroup.objects.create(name=self.group_name)
         input_date = get_date
-        converted_date = datetime.strptime(input_date, "%d/%m/%Y, %H:%M:%S")
+        converted_date = datetime.strptime(input_date, "%d/%m/%Y, %I:%M:%S %p")
 
         Chat.objects.create(
             message=msg,
             sent_at=converted_date,
-            client_timezone="asia",
+            client_timezone="Asia/Kolkata",
             group=instance,
             sender=sender_id,
         )
@@ -79,13 +79,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         sender_id = text_data_json["senderId"]
         message = text_data_json["msg"]
-
         client_time = text_data_json["date"]
-        print(client_time)
         await self.send_data_to_save_chat(sender_id, message, client_time)
         await self.channel_layer.group_send(
             self.group_name,
-            {"type": "chat.message", "message": message, "sender_id": sender_id},
+            {
+                "type": "chat.message",
+                "message": message,
+                "sender_id": sender_id,
+                "date": client_time,
+            },
         )
 
     @sync_to_async
@@ -100,7 +103,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         update_instance = await self.get_instance(int(event["sender_id"]))
         serializer_data = UserSerializer(instance=update_instance).data
-        serializer_data["chat_message"] = event["message"]
+        serializer_data["message"] = event["message"]
+        serializer_data["sender"] = int(event["sender_id"])
+        serializer_data["sent_at"] = event["date"]
         await self.send(json.dumps(serializer_data))
 
     async def disconnect(self, event):

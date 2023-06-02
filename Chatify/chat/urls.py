@@ -9,6 +9,7 @@ from .api import (
     LogoutView,
     SetUserActiveTime,
     CheckUserActivity,
+    ChatMessages,
 )
 
 app_name = "chat"
@@ -34,6 +35,7 @@ urlpatterns_api = [
         CheckUserActivity.as_view(),
         name="CheckUserActive",
     ),
+    path("chat/api/messages/<int:pk>", ChatMessages.as_view(), name="chat_message"),
 ]
 
 
