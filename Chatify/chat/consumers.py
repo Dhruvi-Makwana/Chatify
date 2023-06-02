@@ -55,22 +55,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     @sync_to_async
-    def send_data_to_save_chat(self, sender, msg, get_date):
+    def send_data_to_save_chat(self, sender, msg, get_date, timezone):
         from .models import ChatGroup, Chat, User
         from datetime import datetime
 
         sender_id = User.objects.get(id=int(sender))
-        try:
-            instance = ChatGroup.objects.get(name=self.group_name)
-        except ChatGroup.DoesNotExist:
-            instance = ChatGroup.objects.create(name=self.group_name)
-        input_date = get_date
-        converted_date = datetime.strptime(input_date, "%d/%m/%Y, %I:%M:%S %p")
+        instance, created = ChatGroup.objects.get_or_create(name=self.group_name)
 
         Chat.objects.create(
             message=msg,
-            sent_at=converted_date,
-            client_timezone="Asia/Kolkata",
+            sent_at=datetime.strptime(get_date, "%d/%m/%Y, %I:%M:%S %p"),
+            client_timezone=timezone,
             group=instance,
             sender=sender_id,
         )
@@ -80,7 +75,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender_id = text_data_json["senderId"]
         message = text_data_json["msg"]
         client_time = text_data_json["date"]
-        await self.send_data_to_save_chat(sender_id, message, client_time)
+        tz = text_data_json['timezone']
+        await self.send_data_to_save_chat(sender_id, message, client_time, tz)
         await self.channel_layer.group_send(
             self.group_name,
             {
