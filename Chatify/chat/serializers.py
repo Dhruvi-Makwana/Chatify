@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
+    is_websocket_registered = serializers.BooleanField(default=False, required=False)
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -46,6 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
             "status",
             "full_name",
             "messages",
+            "is_websocket_registered",
         )
 
     def create(self, validated_data):

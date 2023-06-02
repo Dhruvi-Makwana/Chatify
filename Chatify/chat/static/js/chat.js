@@ -64,6 +64,12 @@ app.controller('chatCtrl', function ($scope, $http) {
 
 
     $scope.showChat = function (user) {
+         if (!user.is_websocket_registered) {
+            $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
+            $scope.ps.onopen = function () {
+            }
+        }
+        user.is_websocket_registered = true
          $scope.ajaxGet('api/messages/' + user.id, function (response) {
               $scope.data = response.data.messageData;
 
@@ -87,6 +93,7 @@ app.controller('chatCtrl', function ($scope, $http) {
         $scope.ps.send(JSON.stringify({
             'msg': message, 'receiverId': user, 'senderId': $scope.userId, 'date' : $scope.date, 'timezone' : $scope.tz
         }))
+
         var currentUser = $scope.chatData.find(function (u) {
             return u.id == user;
         });

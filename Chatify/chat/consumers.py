@@ -4,6 +4,7 @@ from channels.generic.websocket import (
 )
 from asgiref.sync import sync_to_async
 import json
+from .websocket_utils import get_group_name
 
 
 class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
@@ -43,11 +44,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.current_user_id = self.scope["user"].id
         self.other_user_id = self.scope["url_route"]["kwargs"]["id"]
-        self.group_name = (
-            f"chat_{self.current_user_id}_{self.other_user_id}"
-            if self.current_user_id > self.other_user_id
-            else f"chat_{self.other_user_id}_{self.current_user_id}"
-        )
+        self.group_name = get_group_name(self.current_user_id, self.other_user_id)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
 
@@ -75,7 +72,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender_id = text_data_json["senderId"]
         message = text_data_json["msg"]
         client_time = text_data_json["date"]
-        tz = text_data_json['timezone']
+        tz = text_data_json["timezone"]
         await self.send_data_to_save_chat(sender_id, message, client_time, tz)
         await self.channel_layer.group_send(
             self.group_name,
