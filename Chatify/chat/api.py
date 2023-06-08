@@ -115,9 +115,8 @@ class CheckUserActivity(APIView):
             last_active_time = datetime.datetime.fromisoformat(redis_time)
             time_diff = (current_time - last_active_time).total_seconds()
             if time_diff > 60:
-                pass
-                # set_status(user_id, "offline")
-                # send_chat_message(user_id, "login", "", "")
+                set_status(user_id, "offline")
+                send_chat_message(user_id, "login", "", "")
         return Response(status=status.HTTP_200_OK)
 
 
