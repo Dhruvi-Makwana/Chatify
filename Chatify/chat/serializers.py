@@ -1,7 +1,12 @@
 from .models import User, Chat
-from rest_framework import serializers
 from .utils import *
 from .constants import PASSWORD_ERROR_MESSAGE
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = "__all__"
 
 
 class UserSerializer(serializers.ModelSerializer):

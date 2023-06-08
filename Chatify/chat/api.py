@@ -10,13 +10,11 @@ from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from rest_framework.serializers import ValidationError
 from .constants import LOGIN_VALIDATION_ERROR_MESSAGE
-from rest_framework import generics
-from .websocket_utils import send_chat_message
+from .websocket_utils import send_chat_message, get_group_name
 from django.contrib.sessions.models import Session
 from .redis_utils import set_last_login, REDIS_CACHE
 from django.utils import timezone
 import datetime
-from rest_framework import generics
 
 
 class RegistrationApi(APIView):
@@ -104,11 +102,6 @@ class SetUserActiveTime(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class ChatMessageListCreateView(generics.ListCreateAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatMessageSerializer
-
-
 class CheckUserActivity(APIView):
     def get(self, request):
         current_time = timezone.now()
@@ -122,3 +115,13 @@ class CheckUserActivity(APIView):
                 set_status(user_id, "offline")
                 send_chat_message(user_id, "login")
         return Response(status=status.HTTP_200_OK)
+
+
+class ChatMessages(APIView):
+    def get(self, request, *args, **kwargs):
+        get_id = kwargs.get("pk")
+        group_name = Chat.objects.filter(
+            group__name=get_group_name(request.user.id, get_id)
+        )
+        serializer = ChatMessageSerializer(group_name, many=True)
+        return JsonResponse({"messageData": serializer.data}, status=status.HTTP_200_OK)

@@ -57,36 +57,41 @@ app.controller('chatCtrl', function ($scope, $http) {
         });
     }
     $scope.chatData = []
+
     $scope.ajaxGet('api/get_online_user/', function (response) {
         $scope.chatData = response.data.UserData;
     })
 
+
     $scope.showChat = function (user) {
-        if (!user.is_websocket_registered) {
+         if (!user.is_websocket_registered) {
             $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
             $scope.ps.onopen = function () {
             }
         }
         user.is_websocket_registered = true
-        $scope.currentUser = user
+         $scope.ajaxGet('api/messages/' + user.id, function (response) {
+              $scope.data = response.data.messageData;
+
+         })
+         $scope.currentUser = user
+         $scope.ps = new WebSocket(`${scheme}//${url}/ws/chat/message/${user.id}/`)
+         $scope.ps.onmessage = function (event) {
+            response = JSON.parse(event.data)
+            $scope.$apply(function () {
+                $scope.data.push(response)
+            })
+        }
     };
 
     $scope.sendChat = function (user) {
         var message = $scope.msgText.text;
         $scope.msgText.text = " "
-        $scope.ps.onmessage = function (event) {
-            response = JSON.parse(event.data)
-            $scope.$apply(function () {
-                response.isSender = true
-                if (currentUser.id == response.id) {
-                    response.isSender = false
-                }
-                currentUser.messages.push(response)
-            })
-        }
 
+        $scope.date = moment().format('DD/MM/YYYY, hh:mm:ss a');
+        $scope.tz = Intl.DateTimeFormat().resolvedOptions().timeZone
         $scope.ps.send(JSON.stringify({
-            'msg': message, 'receiverId': user, 'senderId': $scope.userId
+            'msg': message, 'receiverId': user, 'senderId': $scope.userId, 'date' : $scope.date, 'timezone' : $scope.tz
         }))
 
         var currentUser = $scope.chatData.find(function (u) {

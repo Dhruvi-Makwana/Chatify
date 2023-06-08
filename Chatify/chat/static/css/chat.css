@@ -209,7 +209,6 @@ html {
     bottom: -15px;
     color: rgba(255, 255, 255, 0.5);
     font-size: 10px;
-    width: 70px;
     top: 52px;
 }
 
@@ -289,4 +288,9 @@ li:hover {
 
 .btncolor {
     color: black;
+}
+
+#chat_section
+{
+    overflow: auto;
 }

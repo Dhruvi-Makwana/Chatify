@@ -1,0 +1,26 @@
+ id |     app      |                       name                        |             applied              
+----+--------------+---------------------------------------------------+----------------------------------
+  1 | contenttypes | 0001_initial                                      | 2023-05-01 18:18:47.262854+05:30
+  2 | contenttypes | 0002_remove_content_type_name                     | 2023-05-01 18:18:47.27593+05:30
+  3 | auth         | 0001_initial                                      | 2023-05-01 18:18:47.344085+05:30
+  4 | auth         | 0002_alter_permission_name_max_length             | 2023-05-01 18:18:47.349499+05:30
+  5 | auth         | 0003_alter_user_email_max_length                  | 2023-05-01 18:18:47.356557+05:30
+  6 | auth         | 0004_alter_user_username_opts                     | 2023-05-01 18:18:47.362357+05:30
+  7 | auth         | 0005_alter_user_last_login_null                   | 2023-05-01 18:18:47.371482+05:30
+  8 | auth         | 0006_require_contenttypes_0002                    | 2023-05-01 18:18:47.37392+05:30
+  9 | auth         | 0007_alter_validators_add_error_messages          | 2023-05-01 18:18:47.381859+05:30
+ 10 | auth         | 0008_alter_user_username_max_length               | 2023-05-01 18:18:47.39222+05:30
+ 11 | auth         | 0009_alter_user_last_name_max_length              | 2023-05-01 18:18:47.399336+05:30
+ 12 | auth         | 0010_alter_group_name_max_length                  | 2023-05-01 18:18:47.408375+05:30
+ 13 | auth         | 0011_update_proxy_permissions                     | 2023-05-01 18:18:47.415483+05:30
+ 14 | auth         | 0012_alter_user_first_name_max_length             | 2023-05-01 18:18:47.422708+05:30
+ 22 | sessions     | 0001_initial                                      | 2023-05-01 18:18:47.631359+05:30
+ 23 | sites        | 0001_initial                                      | 2023-05-01 18:18:47.639755+05:30
+ 24 | sites        | 0002_alter_domain_unique                          | 2023-05-01 18:18:47.649869+05:30
+ 25 | chat         | 0002_user_online                                  | 2023-05-03 18:56:18.253721+05:30
+ 26 | chat         | 0003_rename_online_user_is_online                 | 2023-05-04 11:29:52.553491+05:30
+ 27 | chat         | 0002_group_chat                                   | 2023-05-04 12:56:16.215568+05:30
+ 28 | chat         | 0003_alter_group_user                             | 2023-05-04 12:56:16.234103+05:30
+ 29 | chat         | 0004_merge_0002_user_online_0003_alter_group_user | 2023-05-04 12:56:16.237154+05:30
+(22 rows)
+
