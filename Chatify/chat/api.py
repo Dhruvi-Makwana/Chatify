@@ -15,6 +15,7 @@ from django.contrib.sessions.models import Session
 from .redis_utils import set_last_login, REDIS_CACHE
 from django.utils import timezone
 import datetime
+from django.db.models import F
 
 
 class RegistrationApi(APIView):
@@ -38,7 +39,10 @@ class UserListAPI(APIView):
     def get(self, request):
         try:
             queryset = User.objects.all()
-            serializer = UserSerializer(queryset, many=True)
+            serializer = UserSerializer(
+                queryset,
+                many=True,
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"errors": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -54,7 +58,7 @@ class LoginAPIView(APIView):
                 login(request, user)
                 user.is_online = True
                 user.save()
-                send_chat_message(user.id, "login")
+                send_chat_message(user.id, "login", "", "")
                 return Response(
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
@@ -71,7 +75,7 @@ class VisibilityStatusAPI(APIView):
         user_id = request.data.get("id")
         get_status = request.data.get("status")
         set_status(user_id, get_status)
-        send_chat_message(user_id, "login")
+        send_chat_message(user_id, "login", "", "")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -82,16 +86,15 @@ class OnlineUsersAPI(APIView):
             .order_by("-id")
             .exclude(id=request.user.id)
         )
-        return JsonResponse(
-            {"UserData": list(UserSerializer(data, many=True).data)},
-        )
+        serializer = UserSerializer(data, many=True, context={"request": request})
+        return JsonResponse({"UserData": serializer.data})
 
 
 class LogoutView(APIView):
     def get(self, request):
         user_session_key = request.session.session_key
         Session.objects.filter(session_key__startswith=user_session_key).delete()
-        send_chat_message(set_status(request.user.id, "offline"), "logout")
+        send_chat_message(set_status(request.user.id, "offline"), "logout", "", "")
         logout(request)
         return redirect(reverse("chat:loginUI"))
 
@@ -112,8 +115,9 @@ class CheckUserActivity(APIView):
             last_active_time = datetime.datetime.fromisoformat(redis_time)
             time_diff = (current_time - last_active_time).total_seconds()
             if time_diff > 60:
-                set_status(user_id, "offline")
-                send_chat_message(user_id, "login")
+                pass
+                # set_status(user_id, "offline")
+                # send_chat_message(user_id, "login", "", "")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -122,6 +126,20 @@ class ChatMessages(APIView):
         get_id = kwargs.get("pk")
         group_name = Chat.objects.filter(
             group__name=get_group_name(request.user.id, get_id)
-        )
+        ).order_by(F("id"))
         serializer = ChatMessageSerializer(group_name, many=True)
         return JsonResponse({"messageData": serializer.data}, status=status.HTTP_200_OK)
+
+
+class BlockUserAPI(APIView):
+    def post(self, request, *args, **kwargs):
+        current_user_id = request.user.id
+        block_user_id = request.data.get("blockUserId")
+        a = User.objects.get(id=current_user_id)
+        if int(block_user_id) in list(a.block_user.values_list(flat=True)):
+            a.block_user.remove(block_user_id)
+            send_chat_message(current_user_id, "login", block_user_id, "false")
+        else:
+            a.block_user.add(block_user_id)
+            send_chat_message(current_user_id, "login", block_user_id, "true")
+        return Response(status=status.HTTP_200_OK)

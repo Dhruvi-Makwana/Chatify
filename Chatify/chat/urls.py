@@ -10,6 +10,7 @@ from .api import (
     SetUserActiveTime,
     CheckUserActivity,
     ChatMessages,
+    BlockUserAPI,
 )
 
 app_name = "chat"
@@ -36,6 +37,7 @@ urlpatterns_api = [
         name="CheckUserActive",
     ),
     path("chat/api/messages/<int:pk>", ChatMessages.as_view(), name="chat_message"),
+    path("chat/api/block-user/", BlockUserAPI.as_view(), name="block_user"),
 ]
 
 

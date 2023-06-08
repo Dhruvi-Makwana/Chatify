@@ -7,6 +7,9 @@ class User(AbstractUser):
     profile_photo = models.ImageField(upload_to="profile_photo/")
     mobile_number = PhoneNumberField(unique=True)
     is_online = models.BooleanField(default=False, blank=True, null=True)
+    block_user = models.ManyToManyField(
+        "self", blank=True, default="", related_name="blockUser"
+    )
 
     def __str__(self):
         return self.username
@@ -25,9 +28,7 @@ class Chat(models.Model):
     sent_at = models.DateTimeField()
     client_timezone = models.CharField(max_length=50)
     group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
-    sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="messages"
-    )
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
 
     def __str__(self):
         return f"{self.sender.username}"

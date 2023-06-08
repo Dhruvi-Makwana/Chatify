@@ -17,7 +17,12 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
         logout = event.get("logout")
         await self.channel_layer.group_send(
             "visiblity-group",
-            {"type": "chat.message", "id": user_id, "logout": logout},
+            {
+                "type": "chat.message",
+                "id": user_id,
+                "logout": logout,
+                "blocked_user": "",
+            },
         )
 
     @sync_to_async
@@ -32,9 +37,18 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
 
         userid = event.get("id")
         logout = event.get("logout")
+        block_user_id = event.get("blocked_user")
+        is_blocked = event.get("is_blocked")
         modify_instance = await self.updated_instance(userid)
         serializer = UserSerializer(instance=modify_instance)
-        await self.send_json({"data": serializer.data, "user_auth": logout})
+        await self.send_json(
+            {
+                "data": serializer.data,
+                "user_auth": logout,
+                "blocked_user": block_user_id,
+                "is_blocked": is_blocked,
+            }
+        )
 
     async def disconnect(self, event):
         await self.channel_layer.group_discard("visiblity-group", self.channel_name)
