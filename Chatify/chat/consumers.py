@@ -39,6 +39,7 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
         logout = event.get("logout")
         block_user_id = event.get("blocked_user")
         is_blocked = event.get("is_blocked")
+        blocked_by = event.get("blocked_by")
         modify_instance = await self.updated_instance(userid)
         serializer = UserSerializer(instance=modify_instance)
         await self.send_json(
@@ -46,6 +47,7 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
                 "data": serializer.data,
                 "user_auth": logout,
                 "blocked_user": block_user_id,
+                "blocked_by": blocked_by,
                 "is_blocked": is_blocked,
             }
         )

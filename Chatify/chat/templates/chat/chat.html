@@ -62,7 +62,7 @@
 									<div class="col dropdown d-flex mt-3">
 											<span class="bi bi-three-dots-vertical one" data-bs-toggle="dropdown"></span>
 										<div class="dropdown-menu ps-2">
-											<div class="rounded" ng-click="addToBLockList('{{csrf_token}}', user.id )"><span class="p-2" id="changeText_{user.id}" ng-bind="blockButtonText"></span></div>
+											<div class="rounded" ng-click="addToBLockList('{{csrf_token}}', user.id )"><span class="p-2" ng-bind="blockButtonText[currentUser.id]"></span></div>
 										</div>
 									</div>
 								</div>
@@ -130,7 +130,7 @@
 									class="fas fa-location-arrow"></i></span>
 						</div>
 					</div>
-					<div ng-hide="isBlockedText[currentUser.id]"><p>Blocked User</p></div>
+					<div ng-hide="isBlockedText[currentUser.id]"><p ng-bind="blockMessageText"></p></div>
 				</p>
 			</div>
 		</div>

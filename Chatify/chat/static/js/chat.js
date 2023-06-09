@@ -8,6 +8,7 @@ app.config(function($interpolateProvider) {
 app.controller('chatCtrl', function($scope, $http) {
     $scope.userId = $('.userID').text();
     $scope.blockButtonText = "Block";
+    $scope.blockMessageText = "";
     var ws = new WebSocket(`${scheme}//${url}/ws/chat/`)
     ws.onopen = function() {}
 
@@ -26,42 +27,51 @@ app.controller('chatCtrl', function($scope, $http) {
     };
     $scope.isBlocked = {}
     $scope.isBlockedText = {}
+    $scope.blockMessageText = {}
 
     ws.onmessage = function(e, ) {
         let userDetail = JSON.parse(e.data)
         $scope.bloke_user = userDetail.is_blocked
+
+        if (userDetail.is_blocked == "true") {
         $scope.$apply(function() {
 
+            $scope.chatData.forEach(function(item) {
+                if (item.id == userDetail.blocked_user || item.id == userDetail.blocked_by) {
 
-
-            if (userDetail.is_blocked == "true") {
-                if (userDetail.blocked_user == $scope.currentUser.id) {
                     $scope.isBlocked[userDetail.blocked_user] = true;
-                } else if (userDetail.blocked_user == $scope.userId) {
-                    $scope.isBlocked[userDetail.blocked_user] = true;
-
+                    $scope.isBlocked[userDetail.blocked_by] = true;
+                    $scope.blockButtonText[userDetail.blocked_user] = "Unblock";
+                    $scope.isBlockedText[userDetail.blocked_user] = false;
+                    $scope.isBlockedText[userDetail.blocked_by] = false;
+                    $scope.blockMessageText = 'You are blocked.';
                 }
-            } else if (userDetail.is_blocked == "false") {
-                if (userDetail.blocked_user == $scope.currentUser.id) {
+            });
+        });
+        } else if (userDetail.is_blocked == "false") {
+            $scope.$apply(function() {
+            $scope.chatData.forEach(function(item) {
+                if (userDetail.blocked_user == item.id || item.id == userDetail.blocked_by) {
                     $scope.isBlocked[userDetail.blocked_user] = false;
-
-
-                } else if (userDetail.blocked_user == $scope.userId) {
-                    $scope.isBlocked[userDetail.blocked_user] = false;
+                    $scope.isBlocked[userDetail.blocked_by] = false;
+                    $scope.blockButtonText[userDetail.blocked_user] = 'Block';
+                    $scope.blockButtonText[userDetail.blocked_by] = 'Block';
+                    $scope.isBlockedText[userDetail.blocked_user] = true;
+                    $scope.isBlockedText[userDetail.blocked_by] = true;
+                    $scope.blockMessageT0ext = "";
                 }
-            } else if (userDetail.user_auth == "logout") {
-                loginRedirect()
-            } else if (userDetail.data.status == "offline") {
-                $scope.removeOfflineUser(userDetail.data);
-            } else if (userDetail.data.status == "online") {
-                if (userDetail.data.id != $scope.userId) {
-                    $scope.addOnlineUserToList(userDetail.data);
-                }
+            });
+         });
+        } else if (userDetail.user_auth == "logout") {
+            loginRedirect()
+        } else if (userDetail.data.status == "offline") {
+            $scope.removeOfflineUser(userDetail.data);
+        } else if (userDetail.data.status == "online") {
+            if (userDetail.data.id != $scope.userId) {
+                $scope.addOnlineUserToList(userDetail.data);
             }
-        })
+        }
     }
-
-
 
     ws.onclose = function(event) {}
 
@@ -98,14 +108,25 @@ app.controller('chatCtrl', function($scope, $http) {
         }
         user.is_websocket_registered = true
         $scope.currentUser = user
-        if ($scope.currentUser.block_user == true) {
-            $scope.isBlocked[$scope.currentUser.id] = true;
-            $scope.blockButtonText = 'Unblock';
-        } else {
-            $scope.blockButtonText = 'Block';
-        }
 
+        $scope.chatData.forEach(function(item) {
+            if (item.block_user == true) {
+                $scope.isBlocked[item.id] = true;
+                $scope.isBlocked[item.id] = true;
+                $scope.blockButtonText[item.id] = "Unblock";
+                $scope.isBlockedText[item.id] = false;
+                $scope.isBlockedText[item.id] = false;
+                $scope.blockMessageText = 'You are blocked.';
+            } else {
 
+                $scope.isBlocked[item.id] = false;
+                $scope.blockButtonText[item.id] = "block";
+                $scope.isBlockedText[item.id] = true;
+                $scope.isBlockedText[item.id] = true;
+                $scope.blockMessageText = '';
+
+            }
+        });
     };
     $scope.msgText = {};
     $scope.sendChat = function(user) {
@@ -144,11 +165,6 @@ app.controller('chatCtrl', function($scope, $http) {
         $scope.blocked = true
         formData.append('blockUserId', blockUserId)
         makeAjaxRequest('POST', csrf_token, "api/block-user/", formData, function(response) {})
-        if ($scope.blockButtonText === 'Block') {
-            $scope.blockButtonText = 'Unblock';
-        } else {
-            $scope.blockButtonText = 'Block';
-        }
     }
     $scope.myInterval = setInterval(setUserLastActiveTime, 20000);
 

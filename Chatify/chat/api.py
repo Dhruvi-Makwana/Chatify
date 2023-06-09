@@ -58,7 +58,7 @@ class LoginAPIView(APIView):
                 login(request, user)
                 user.is_online = True
                 user.save()
-                send_chat_message(user.id, "login", "", "")
+                send_chat_message(user.id, "login", "", "", "")
                 return Response(
                     {"login": login_serializer.data}, status=status.HTTP_200_OK
                 )
@@ -75,7 +75,7 @@ class VisibilityStatusAPI(APIView):
         user_id = request.data.get("id")
         get_status = request.data.get("status")
         set_status(user_id, get_status)
-        send_chat_message(user_id, "login", "", "")
+        send_chat_message(user_id, "login", "", "", "")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -91,10 +91,26 @@ class OnlineUsersAPI(APIView):
 
 
 class LogoutView(APIView):
+
+    def all_unexpired_sessions_for_user(self, user):
+        user_sessions = []
+        all_sessions = Session.objects.filter(expire_date__gte=datetime.datetime.now())
+        for session in all_sessions:
+            session_data = session.get_decoded()
+            if user.pk == int(session_data.get('_auth_user_id')):
+                user_sessions.append(session.pk)
+        return Session.objects.filter(pk__in=user_sessions)
+
+    def delete_all_unexpired_sessions_for_user(self, user, session_to_omit=None):
+        session_list = self.all_unexpired_sessions_for_user(user)
+
+        if session_to_omit is not None:
+            session_list.exclude(session_key=session_to_omit.session_key)
+            return redirect(reverse("chat:loginUI"))
+        session_list.delete()
+
     def get(self, request):
-        user_session_key = request.session.session_key
-        Session.objects.filter(session_key__startswith=user_session_key).delete()
-        send_chat_message(set_status(request.user.id, "offline"), "logout", "", "")
+        self.delete_all_unexpired_sessions_for_user(request.user)
         logout(request)
         return redirect(reverse("chat:loginUI"))
 
@@ -116,7 +132,7 @@ class CheckUserActivity(APIView):
             time_diff = (current_time - last_active_time).total_seconds()
             if time_diff > 60:
                 set_status(user_id, "offline")
-                send_chat_message(user_id, "login", "", "")
+                send_chat_message(user_id, "login", "", "", "")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -134,11 +150,15 @@ class BlockUserAPI(APIView):
     def post(self, request, *args, **kwargs):
         current_user_id = request.user.id
         block_user_id = request.data.get("blockUserId")
-        a = User.objects.get(id=current_user_id)
-        if int(block_user_id) in list(a.block_user.values_list(flat=True)):
-            a.block_user.remove(block_user_id)
-            send_chat_message(current_user_id, "login", block_user_id, "false")
+        current_user = User.objects.get(id=current_user_id)
+        if int(block_user_id) in list(current_user.block_user.values_list(flat=True)):
+            current_user.block_user.remove(block_user_id)
+            send_chat_message(
+                current_user_id, "login", block_user_id, current_user_id, "false"
+            )
         else:
-            a.block_user.add(block_user_id)
-            send_chat_message(current_user_id, "login", block_user_id, "true")
+            current_user.block_user.add(block_user_id)
+            send_chat_message(
+                current_user_id, "login", block_user_id, current_user_id, "true"
+            )
         return Response(status=status.HTTP_200_OK)
