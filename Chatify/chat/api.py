@@ -16,6 +16,12 @@ from .redis_utils import set_last_login, REDIS_CACHE
 from django.utils import timezone
 import datetime
 from django.db.models import F
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from io import BytesIO
+from zipfile import ZipFile
+from django.shortcuts import render
 
 
 class RegistrationApi(APIView):
@@ -91,13 +97,12 @@ class OnlineUsersAPI(APIView):
 
 
 class LogoutView(APIView):
-
     def all_unexpired_sessions_for_user(self, user):
         user_sessions = []
         all_sessions = Session.objects.filter(expire_date__gte=datetime.datetime.now())
         for session in all_sessions:
             session_data = session.get_decoded()
-            if user.pk == int(session_data.get('_auth_user_id')):
+            if user.pk == int(session_data.get("_auth_user_id")):
                 user_sessions.append(session.pk)
         return Session.objects.filter(pk__in=user_sessions)
 
@@ -162,3 +167,48 @@ class BlockUserAPI(APIView):
                 current_user_id, "login", block_user_id, current_user_id, "true"
             )
         return Response(status=status.HTTP_200_OK)
+
+
+class HomePage(APIView):
+    def get(self, request, *args, **kwargs):
+
+        get_id = kwargs.get("pk")
+        group_name = Chat.objects.filter(
+            group__name=get_group_name(request.user.id, get_id)
+        ).order_by(F("id"))
+        serializer = ChatMessageSerializer(group_name, many=True)
+        receiver_img = User.objects.get(id=get_id)
+        return render(
+            request,
+            "chat/export_chat_design.html",
+            {"messageData": serializer.data, "receiver_img": receiver_img},
+        )
+
+
+class PdfDownloadAPI(APIView):
+    def get(self, request, *args, **kwargs):
+        get_id = kwargs.get("pk")
+        group_name = Chat.objects.filter(
+            group__name=get_group_name(request.user.id, get_id)
+        ).order_by(F("id"))
+        serializer = ChatMessageSerializer(group_name, many=True)
+        receiver_img = User.objects.get(id=get_id)
+
+        # Convert HTML to PDF
+        html_content = render_to_string(
+            "chat/export_chat_design.html",
+            {"messageData": serializer.data, "receiver_img": receiver_img},
+        )
+        pdf_file = HTML(string=html_content).write_pdf()
+
+        # Create ZIP file
+        zip_buffer = BytesIO()
+        with ZipFile(zip_buffer, "w", allowZip64=True) as myzip:
+            myzip.writestr("pdf_file.pdf", pdf_file)
+        myzip.close()
+        # Create HTTP response
+        zip_buffer.seek(0)
+        response = HttpResponse(zip_buffer, content_type="application/zip")
+        response["Content-Disposition"] = "attachment; filename=chat.zip"
+
+        return response

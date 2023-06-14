@@ -62,7 +62,7 @@
 									<div class="col dropdown d-flex mt-3">
 											<span class="bi bi-three-dots-vertical one" data-bs-toggle="dropdown"></span>
 										<div class="dropdown-menu ps-2">
-											<div class="rounded" ng-click="addToBLockList('{{csrf_token}}', user.id )"><span class="p-2" ng-bind="blockButtonText[currentUser.id]"></span></div>
+											<div class="rounded" ng-click="addToBLockList('{{csrf_token}}', user.id )"><span class="p-2" ng-bind="blockButtonText[user.id]"></span></div>
 										</div>
 									</div>
 								</div>
@@ -121,7 +121,9 @@
 				<div class="card-footer hide_div">
 					<div class="input-group" ng-hide="isBlocked[currentUser.id]">
 						<div class="input-group-append">
-							<span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+							<span class="input-group-text attach_btn" ng-click="exportChat(currentUser.id)"><img src="{% static 'images/download.png'%}" height="25px" width="25spx">
+
+							</span>
 						</div>
 						<textarea ng-model="msgText[currentUser.id]" class="form-control type_msg"
 							placeholder="Type your message..." ></textarea>
@@ -130,7 +132,7 @@
 									class="fas fa-location-arrow"></i></span>
 						</div>
 					</div>
-					<div ng-hide="isBlockedText[currentUser.id]"><p ng-bind="blockMessageText"></p></div>
+					<div ng-hide="isBlockedText[currentUser.id]"><p ng-bind="blockMessageText[currentUser.id]"></p></div>
 				</p>
 			</div>
 		</div>

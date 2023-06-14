@@ -11,6 +11,8 @@ from .api import (
     CheckUserActivity,
     ChatMessages,
     BlockUserAPI,
+    PdfDownloadAPI,
+    HomePage,
 )
 
 app_name = "chat"
@@ -38,6 +40,8 @@ urlpatterns_api = [
     ),
     path("chat/api/messages/<int:pk>", ChatMessages.as_view(), name="chat_message"),
     path("chat/api/block-user/", BlockUserAPI.as_view(), name="block_user"),
+    path("chat/pdf_download/<int:pk>", PdfDownloadAPI.as_view(), name="pdf_download"),
+    path("homepage/<int:pk>", HomePage.as_view()),
 ]
 
 
