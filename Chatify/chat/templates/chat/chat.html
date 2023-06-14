@@ -7,7 +7,7 @@
 <span style="display: none;" class="userID">{{request.user.id}}</span>
 <script src="{% static 'js/base.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-<script src="{% static 'js/chat.js' %}"></script>
+<script src="{% static 'js/chat.js' %}?v=111"></script>
 
 <div class="container-fluid h-100" ng-app="ChatApp" ng-controller="chatCtrl">
 	<div class="row">
@@ -121,7 +121,7 @@
 				<div class="card-footer hide_div">
 					<div class="input-group" ng-hide="isBlocked[currentUser.id]">
 						<div class="input-group-append">
-							<span class="input-group-text attach_btn" ng-click="exportChat(currentUser.id)"><img src="{% static 'images/download.png'%}" height="25px" width="25spx">
+							<span class="input-group-text attach_btn" ng-click="exportChat(currentUser.id)"><img src="{% static 'images/download1.png'%}" height="25px" width="25spx">
 
 							</span>
 						</div>

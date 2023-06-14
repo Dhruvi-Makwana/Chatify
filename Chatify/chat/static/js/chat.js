@@ -172,11 +172,13 @@ app.controller('chatCtrl', function($scope, $http) {
      $scope.exportChat = function(currentUser_id) {
         current_user_id = currentUser_id
         $scope.ajaxGet('pdf_download/' + current_user_id, function(response) {
-        var blob = new Blob([response], {type: 'application/zip'});
+        var blob = new Blob([response]);
+        console.log(blob)
         var downloadUrl = URL.createObjectURL(blob);
+
         var a = document.createElement("a");
         a.href = downloadUrl;
-        a.download = "chat.zip";
+        a.download = "chat.pdf";
         document.body.appendChild(a);
         a.click();
         });
