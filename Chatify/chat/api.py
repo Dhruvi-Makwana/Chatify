@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer, LoginSerializer, ChatMessageSerializer
-from .models import User, Chat
+from .models import User, Chat, ChatGroup
 from .utils import validate_contact_number, set_status
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate
@@ -22,6 +22,8 @@ from weasyprint import HTML
 from io import BytesIO
 from zipfile import ZipFile
 from django.shortcuts import render
+from .websocket_utils import get_group_name
+from datetime import datetime
 
 
 class RegistrationApi(APIView):
@@ -133,12 +135,11 @@ class CheckUserActivity(APIView):
             redis_time = REDIS_CACHE.get(key)
             user_id = key.decode("utf-8").split(":")[1]
             redis_time = redis_time.decode("utf-8")
-            last_active_time = datetime.datetime.fromisoformat(redis_time)
+            last_active_time = datetime.fromisoformat(redis_time)
             time_diff = (current_time - last_active_time).total_seconds()
             if time_diff > 60:
-                pass
-                # set_status(user_id, "offline")
-                # send_chat_message(user_id, "login", "", "", "")
+                set_status(user_id, "offline")
+                send_chat_message(user_id, "login", "", "", "")
         return Response(status=status.HTTP_200_OK)
 
 
@@ -190,36 +191,48 @@ class PdfDownloadAPI(APIView):
     def get(self, request, *args, **kwargs):
         get_id = kwargs.get("pk")
         group_name = Chat.objects.filter(
-            group__name=get_group_name(1, get_id)
+            group__name=get_group_name(request.user.id, get_id)
         ).order_by(F("id"))
         serializer = ChatMessageSerializer(group_name, many=True)
         receiver_img = User.objects.get(id=get_id)
-
-        # breakpoint()
 
         # Convert HTML to PDF
         html_content = render_to_string(
             "chat/export_chat_design.html",
             {"messageData": serializer.data, "receiver_img": receiver_img},
-            request=request
+            request=request,
         )
         pdf_file = HTML(string=html_content).write_pdf()
-        print(pdf_file, "pdf_file")
-        with open("test.pdf", "wb+") as test:
-            test.write(pdf_file)
-        with open("test.pdf", "rb+") as test:
-            data = test.read()
-
-        return str(pdf_file)
 
         # Create ZIP file
-        # zip_buffer = BytesIO()
-        # with ZipFile(zip_buffer, "w", allowZip64=True) as myzip:
-        #     myzip.writestr("pdf_file.pdf", pdf_file)
-        # myzip.close()
-        # # Create HTTP response
-        # zip_buffer.seek(0)
-        response = HttpResponse(pdf_file, content_type="application/pdf")
-        response["Content-Disposition"] = "attachment; filename=chat.pdf"
+        zip_buffer = BytesIO()
+        with ZipFile(zip_buffer, "w", allowZip64=True) as myzip:
+            myzip.writestr("pdf_file.pdf", pdf_file)
+        myzip.close()
+        # Create HTTP response
+        zip_buffer.seek(0)
+        response = HttpResponse(zip_buffer, content_type="application/zip")
+        response["Content-Disposition"] = "attachment; filename=chat.zip"
 
         return response
+
+
+class SaveAttachment(APIView):
+    def post(self, request):
+        data = request.data.dict()
+        sender = data["senderId"]
+        receiver = data["receiverId"]
+        date = data["date"]
+        file = data["file"]
+        group_name = get_group_name(sender, receiver)
+        sender_id = User.objects.get(id=int(sender))
+        instance, created = ChatGroup.objects.get_or_create(name=group_name)
+        Chat.objects.create(
+            message=None,
+            sent_at=datetime.strptime(date, "%d/%m/%Y, %I:%M:%S %p"),
+            client_timezone=data["timezone"],
+            group=instance,
+            sender=sender_id,
+            attachment=file,
+        )
+        return Response(status=status.HTTP_200_OK)

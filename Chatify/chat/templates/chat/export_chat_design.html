@@ -9,7 +9,7 @@
 </head>
 <body>
 	<p class="text-center fs-2 font-bold font-italic mt-5 text-decoration-underline">{{request.user.username|capfirst}} Chat with {{receiver_img.username|capfirst}}</p>
-	<table class="table m-5 table-bordered">
+	<table border='1' style='border-collapse:collapse'>
     <thead>
       <tr>
         <th class="ps-3 fs-2 font-weight-bold">{{receiver_img.username|capfirst}}</th>
@@ -18,15 +18,16 @@
     </thead>
     <tbody>
 	{% for data in messageData %}
+
       <tr>
 		  {% if data.sender != request.user.id%}
-		  <td><span class="font-italic fs-5 ps-2">{{data.message}}</span> {{data.sent_at}}</td>
+		  <td><span><img src="{{receiver_img.profile_photo.url}}" class="rounded-2 me-2" height="20px" width="20px"></span><span class="font-italic fs-5 ps-2">{{data.message}}</span> {{data.sent_at}}</td>
 		  <td></td>
       </tr>
       <tr>
 		  {% else %}
         <td></td>
-        <td><span class="font-italic fs-5 ps-1">{{data.message}}</span> {{ data.sent_at }}</td>
+        <td><span><img src="{{request.user.profile_photo.url}}" class="rounded-2 ms-2" height="20px" width="20px"></span><span class="font-italic fs-5 ps-1">{{data.message}}</span> {{ data.sent_at }}</td>
 		  {% endif %}
       </tr>
 	{% endfor %}

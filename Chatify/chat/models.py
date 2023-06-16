@@ -24,11 +24,12 @@ class ChatGroup(models.Model):
 
 
 class Chat(models.Model):
-    message = models.CharField(max_length=5000)
+    message = models.CharField(max_length=5000, blank=True, null=True)
     sent_at = models.DateTimeField()
     client_timezone = models.CharField(max_length=50)
     group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
+    attachment = models.FileField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.sender.username}"
