@@ -16,6 +16,7 @@ from .api import (
     SaveAttachment,
 )
 
+
 app_name = "chat"
 
 urlpatterns_api = [
