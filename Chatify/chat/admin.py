@@ -17,6 +17,7 @@ class ChatAdmin(admin.ModelAdmin):
         "group",
         "sender",
         "attachment",
+        "is_deleted",
     )
 
 

@@ -24,6 +24,7 @@ from zipfile import ZipFile
 from django.shortcuts import render
 from .websocket_utils import get_group_name
 from datetime import datetime
+from django.db.models import Q
 
 
 class RegistrationApi(APIView):
@@ -146,9 +147,11 @@ class CheckUserActivity(APIView):
 class ChatMessages(APIView):
     def get(self, request, *args, **kwargs):
         get_id = kwargs.get("pk")
-        group_name = Chat.objects.filter(
-            group__name=get_group_name(request.user.id, get_id)
-        ).order_by(F("id"))
+        group_name = (
+            Chat.objects.filter(group__name=get_group_name(request.user.id, get_id))
+            .order_by(F("id"))
+            .exclude(is_deleted=True)
+        )
         serializer = ChatMessageSerializer(group_name, many=True)
         return JsonResponse({"messageData": serializer.data}, status=status.HTTP_200_OK)
 
@@ -235,4 +238,19 @@ class SaveAttachment(APIView):
             sender=sender_id,
             attachment=file,
         )
+        return Response(status=status.HTTP_200_OK)
+
+
+class SaveUnsentMessage(APIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data.dict()
+        user = data["requestUser"]
+        currentuser = data["currentUser"]
+        msg = data["message"]
+        get_chat = Chat.objects.filter(
+            Q(message=msg) & Q(group__name=get_group_name(int(user), int(currentuser)))
+        ).last()
+        if get_chat:
+            Chat.objects.filter(pk=get_chat.pk).update(is_deleted=True)
+
         return Response(status=status.HTTP_200_OK)

@@ -1,5 +1,3 @@
-//let permission = await Notification.requestPermission();
-//const greeting = new Notification('Hi, How are you?');
 var app = angular.module('ChatApp', []);
 
 app.config(function($interpolateProvider) {
@@ -121,9 +119,9 @@ app.controller('chatCtrl', function($scope, $http) {
             })
             $scope.ps.onmessage = function(event) {
                 response = JSON.parse(event.data)
+                console.log(response)
                 $scope.$apply(function() {
                     $scope.data.push(response)
-                    console.log(response.message)
                     showNotification(response.message, response.full_name);
                 })
             }
@@ -134,13 +132,17 @@ app.controller('chatCtrl', function($scope, $http) {
     };
     $scope.msgText = {};
     //   sending a chat on click button
+
     $scope.sendChat = function(user) {
         var message = $scope.msgText[user];
         $scope.msgText[user] = ""
         $scope.date = moment().format('DD/MM/YYYY, hh:mm:ss a');
         $scope.tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-        //sending attachment
-        var file = $('input[type=file]')[0].files[0]
+
+        //        var file = $('input[type=file]')[0].files[0]
+        //           console.log(file)
+        var file = $scope.fileInput ? $scope.fileInput.files[0] : $('input[type=file]')[0].files[0];
+        console.log(file);
         if (file) {
             var formData = new FormData();
             var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
@@ -148,15 +150,17 @@ app.controller('chatCtrl', function($scope, $http) {
             formData.append('senderId', $scope.userId)
             formData.append('date', $scope.date)
             formData.append('timezone', $scope.tz)
-            formData.append('file', $('input[type=file]')[0].files[0])
-            makeAjaxRequest('POST', csrfToken, "/api/savefile/", formData, function(response) {})
-            $scope.ps.send(JSON.stringify({
-                'msg': null,
-                'receiverId': user,
-                'senderId': $scope.userId,
-                'date': $scope.date,
-                'timezone': $scope.tz
-            }))
+            formData.append('file', file)
+            makeAjaxRequest('POST', csrfToken, "/api/savefile/", formData, function(response) {
+                $scope.ps.send(JSON.stringify({
+                    'msg': null,
+                    'receiverId': user,
+                    'senderId': $scope.userId,
+                    'date': $scope.date,
+                    'timezone': $scope.tz
+                })); //$scope.fileInput = null; // Reset file input
+                $('input[type=file]').val(null);
+            })
         } else {
             $scope.ps.send(JSON.stringify({
                 'msg': message,
@@ -171,7 +175,11 @@ app.controller('chatCtrl', function($scope, $http) {
         });
     }
 
-
+    $scope.handleFileDrop = function(files) {
+        if (files && files.length > 0) {
+            $scope.fileInput = files[0];
+        }
+    };
 
 
     // set status of user online/offline on radio button click
@@ -206,16 +214,35 @@ app.controller('chatCtrl', function($scope, $http) {
             a.click();
         });
     }
-    $scope.myInterval = setInterval(setUserLastActiveTime, 20000);
 
+    $scope.unsendMsg = function(csrf_token, UserId, currentUser, msg, msgid, sent_time) {
+        //        $scope.$apply(function() {
+        var sentTime = moment(sent_time, "DD/MM/YYYY, hh:mm:ss a").format("YYYY-MM-DDTHH:mm:ssZ");
+        var currentTime = new Date();
+        var timeDiff = currentTime - new Date(sentTime);
+        var formData = new FormData();
+        formData.append('requestUser', UserId)
+        formData.append('currentUser', currentUser)
+        formData.append('message', msg)
+        console.log(timeDiff)
+        if (timeDiff < 60000) {
+            makeAjaxRequest('POST', csrf_token, "/api/unsend-message/", formData, function(response) {})
+            //         $scope.$apply(function() {
+            $scope.data = $scope.data.filter(data => data.message_id !== msgid);
+            //               $scope.data.$apply();
+            //          });
+        } else {
+            alert("you can't unsend this message")
+        }
+        //     });
+    }
+    $scope.myInterval = setInterval(setUserLastActiveTime, 20000);
     function setUserLastActiveTime() {
         $scope.ajaxGet('api/set-user-active-time/', function(response) {})
     }
 
     $scope.oneMinuteInterval = setInterval(getUserActiveTime, 60000);
-
     function getUserActiveTime() {
         $scope.ajaxGet('api/get-user-from-redis/', function(response) {})
     }
-
 });

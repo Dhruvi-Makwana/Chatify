@@ -30,6 +30,7 @@ class Chat(models.Model):
     group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
     attachment = models.FileField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
         return f"{self.sender.username}"
