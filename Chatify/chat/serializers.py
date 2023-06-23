@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
     messages = serializers.SerializerMethodField()
     is_websocket_registered = serializers.BooleanField(default=False, required=False)
+    block_user = serializers.SerializerMethodField()
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -29,6 +30,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_messages(self, obj):
         return []
+
+    def get_block_user(self, obj):
+        if self.context.get("request"):
+            request = self.context["request"]
+            current_user = request.user
+            return current_user in obj.block_user.all()
+        return None
 
     class Meta:
         model = User
@@ -48,6 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
             "full_name",
             "messages",
             "is_websocket_registered",
+            "block_user",
         )
 
     def create(self, validated_data):

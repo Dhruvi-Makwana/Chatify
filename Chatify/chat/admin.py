@@ -9,9 +9,18 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ("id", "message", "sent_at","client_timezone", "group", "sender")
+    list_display = (
+        "id",
+        "message",
+        "sent_at",
+        "client_timezone",
+        "group",
+        "sender",
+        "attachment",
+        "is_deleted",
+    )
 
 
 @admin.register(ChatGroup)
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ("id","name", "created")
+    list_display = ("id", "name", "created")

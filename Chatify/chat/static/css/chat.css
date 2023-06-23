@@ -197,7 +197,7 @@ html {
     position: absolute;
     left: 0;
     bottom: -15px;
-    color: rgba(255, 255, 255, 0.5);
+    color: black;
     font-size: 10px;
     width: 70px;
     top: 52px;
@@ -207,7 +207,7 @@ html {
     position: absolute;
     right: 0;
     bottom: -15px;
-    color: rgba(255, 255, 255, 0.5);
+    color: black;
     font-size: 10px;
     top: 52px;
 }
@@ -293,4 +293,23 @@ li:hover {
 #chat_section
 {
     overflow: auto;
+}
+.one
+{
+    padding-left: 30px;
+    padding-top: 10px;
+    color:white;
+}
+.blockMsgText
+{
+   margin-left: 290px;
+    text-decoration: underline;
+    color: white;
+    font-size: 20px;
+}
+.unsend_dot
+{
+    padding-left: 30px;
+    padding-top: 10px;
+    color:black;
 }

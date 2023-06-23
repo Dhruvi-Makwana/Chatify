@@ -17,7 +17,12 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
         logout = event.get("logout")
         await self.channel_layer.group_send(
             "visiblity-group",
-            {"type": "chat.message", "id": user_id, "logout": logout},
+            {
+                "type": "chat.message",
+                "id": user_id,
+                "logout": logout,
+                "blocked_user": "",
+            },
         )
 
     @sync_to_async
@@ -32,9 +37,20 @@ class VisibilityStatusConsumer(AsyncJsonWebsocketConsumer):
 
         userid = event.get("id")
         logout = event.get("logout")
+        block_user_id = event.get("blocked_user")
+        is_blocked = event.get("is_blocked")
+        blocked_by = event.get("blocked_by")
         modify_instance = await self.updated_instance(userid)
         serializer = UserSerializer(instance=modify_instance)
-        await self.send_json({"data": serializer.data, "user_auth": logout})
+        await self.send_json(
+            {
+                "data": serializer.data,
+                "user_auth": logout,
+                "blocked_user": block_user_id,
+                "blocked_by": blocked_by,
+                "is_blocked": is_blocked,
+            }
+        )
 
     async def disconnect(self, event):
         await self.channel_layer.group_discard("visiblity-group", self.channel_name)
@@ -59,13 +75,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender_id = User.objects.get(id=int(sender))
         instance, created = ChatGroup.objects.get_or_create(name=self.group_name)
 
-        Chat.objects.create(
+        chat = Chat.objects.create(
             message=msg,
             sent_at=datetime.strptime(get_date, "%d/%m/%Y, %I:%M:%S %p"),
             client_timezone=timezone,
             group=instance,
             sender=sender_id,
         )
+        if chat:
+            return chat.id
+        else:
+            return None
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -73,7 +93,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json["msg"]
         client_time = text_data_json["date"]
         tz = text_data_json["timezone"]
-        await self.send_data_to_save_chat(sender_id, message, client_time, tz)
+        if message is not None:
+            msg_id = await self.send_data_to_save_chat(
+                sender_id, message, client_time, tz
+            )
+            print(type(msg_id))
+        else:
+            msg_id = None
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -81,8 +107,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "message": message,
                 "sender_id": sender_id,
                 "date": client_time,
+                "message_id": msg_id,
             },
         )
+
+    @sync_to_async
+    def get_attachment(self, sender_id):
+        from .models import Chat
+
+        last_chat = Chat.objects.filter(sender__id=sender_id).last()
+        if last_chat:
+            attachment_url = last_chat.attachment.url if last_chat.attachment else None
+            print(attachment_url)
+            return attachment_url
+        else:
+            return None
 
     @sync_to_async
     def get_instance(self, sender_id):
@@ -99,6 +138,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         serializer_data["message"] = event["message"]
         serializer_data["sender"] = int(event["sender_id"])
         serializer_data["sent_at"] = event["date"]
+        serializer_data["attachment"] = await self.get_attachment(
+            int(event["sender_id"])
+        )
+        serializer_data["message_id"] = event["message_id"]
         await self.send(json.dumps(serializer_data))
 
     async def disconnect(self, event):
