@@ -97,7 +97,7 @@
 						<!-- receive message showing div -->
 
 						<div ng-if="currentUser.id == msg.sender" class="d-flex justify-content-start mb-4"> <!--ng-if="!message.isSender" -->
-							<div class="img_cont_msg" ng-if="msg.message !== ''">
+							<div class="img_cont_msg" ng-if="msg.message">
 								<img ng-src={[currentUser.profile_photo]} class="rounded-circle user_img_msg"><!--ng-src="{[message.profile_photo]}" -->
 							</div>
 							<div class="msg_cotainer" ng-if="msg.message">

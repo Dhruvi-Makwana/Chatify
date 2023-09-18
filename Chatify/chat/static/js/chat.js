@@ -1,3 +1,5 @@
+//let permission = await Notification.requestPermission();
+//const greeting = new Notification('Hi, How are you?');
 var app = angular.module('ChatApp', []);
 
 app.config(function($interpolateProvider) {
@@ -110,7 +112,6 @@ app.controller('chatCtrl', function($scope, $http) {
         }
     });
 
-
     $scope.showChat = function(user) {
         if (!user.is_websocket_registered) {
             $scope.ps = new WebSocket(`ws://127.0.0.1:8000/ws/chat/message/${user.id}/`)
@@ -122,6 +123,8 @@ app.controller('chatCtrl', function($scope, $http) {
                 response = JSON.parse(event.data)
                 $scope.$apply(function() {
                     $scope.data.push(response)
+                    console.log(response.message)
+                    showNotification(response.message, response.full_name);
                 })
             }
         }
