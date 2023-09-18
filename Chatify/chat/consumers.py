@@ -75,13 +75,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender_id = User.objects.get(id=int(sender))
         instance, created = ChatGroup.objects.get_or_create(name=self.group_name)
 
-        Chat.objects.create(
+        chat = Chat.objects.create(
             message=msg,
             sent_at=datetime.strptime(get_date, "%d/%m/%Y, %I:%M:%S %p"),
             client_timezone=timezone,
             group=instance,
             sender=sender_id,
         )
+        if chat:
+            return chat.id
+        else:
+            return None
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -90,7 +94,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         client_time = text_data_json["date"]
         tz = text_data_json["timezone"]
         if message is not None:
-            await self.send_data_to_save_chat(sender_id, message, client_time, tz)
+            msg_id = await self.send_data_to_save_chat(
+                sender_id, message, client_time, tz
+            )
+            print(type(msg_id))
+        else:
+            msg_id = None
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -98,6 +107,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "message": message,
                 "sender_id": sender_id,
                 "date": client_time,
+                "message_id": msg_id,
             },
         )
 
@@ -105,9 +115,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def get_attachment(self, sender_id):
         from .models import Chat
 
-        last_chat = Chat.objects.filter(sender__id=sender_id).order_by("-id").first()
+        last_chat = Chat.objects.filter(sender__id=sender_id).last()
         if last_chat:
             attachment_url = last_chat.attachment.url if last_chat.attachment else None
+            print(attachment_url)
             return attachment_url
         else:
             return None
@@ -130,6 +141,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         serializer_data["attachment"] = await self.get_attachment(
             int(event["sender_id"])
         )
+        serializer_data["message_id"] = event["message_id"]
         await self.send(json.dumps(serializer_data))
 
     async def disconnect(self, event):
