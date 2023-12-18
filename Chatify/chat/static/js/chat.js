@@ -236,13 +236,4 @@ app.controller('chatCtrl', function($scope, $http) {
         }
         //     });
     }
-    $scope.myInterval = setInterval(setUserLastActiveTime, 20000);
-    function setUserLastActiveTime() {
-        $scope.ajaxGet('api/set-user-active-time/', function(response) {})
-    }
-
-    $scope.oneMinuteInterval = setInterval(getUserActiveTime, 60000);
-    function getUserActiveTime() {
-        $scope.ajaxGet('api/get-user-from-redis/', function(response) {})
-    }
 });

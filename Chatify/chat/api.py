@@ -123,27 +123,6 @@ class LogoutView(APIView):
         return redirect(reverse("chat:loginUI"))
 
 
-class SetUserActiveTime(APIView):
-    def get(self, request):
-        set_last_login(request.user.id)
-        return Response(status=status.HTTP_200_OK)
-
-
-class CheckUserActivity(APIView):
-    def get(self, request):
-        current_time = timezone.now()
-        for key in REDIS_CACHE.keys("user:*:last_login"):
-            redis_time = REDIS_CACHE.get(key)
-            user_id = key.decode("utf-8").split(":")[1]
-            redis_time = redis_time.decode("utf-8")
-            last_active_time = datetime.fromisoformat(redis_time)
-            time_diff = (current_time - last_active_time).total_seconds()
-            if time_diff > 60:
-                set_status(user_id, "offline")
-                send_chat_message(user_id, "login", "", "", "")
-        return Response(status=status.HTTP_200_OK)
-
-
 class ChatMessages(APIView):
     def get(self, request, *args, **kwargs):
         get_id = kwargs.get("pk")

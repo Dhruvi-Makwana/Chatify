@@ -97,7 +97,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             msg_id = await self.send_data_to_save_chat(
                 sender_id, message, client_time, tz
             )
-            print(type(msg_id))
         else:
             msg_id = None
         await self.channel_layer.group_send(
@@ -118,7 +117,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         last_chat = Chat.objects.filter(sender__id=sender_id).last()
         if last_chat:
             attachment_url = last_chat.attachment.url if last_chat.attachment else None
-            print(attachment_url)
             return attachment_url
         else:
             return None
